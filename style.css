@@ -178,7 +178,7 @@ body{
 
     text-align:center;
 
-    color::#000;
+    color:#000;
 
     transition:.30s;
 
@@ -772,5 +772,130 @@ body{
 .attendance-table tr:nth-child(even){
 
     background:#f7f9fc;
+
+}
+/*=========================================
+        Exam Card
+=========================================*/
+
+.exam-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+}
+
+.exam-table th{
+
+    background:#0d47a1;
+
+    color:#fff;
+
+    padding:15px;
+
+    font-size:18px;
+
+}
+
+.exam-table td{
+
+    border:1px solid #ddd;
+
+    padding:14px;
+
+    text-align:center;
+
+    font-size:18px;
+
+}
+
+.exam-table tr:nth-child(even){
+
+    background:#f7f9fc;
+
+}
+
+/*=========================================
+        Back Button
+=========================================*/
+
+.back-btn{
+
+    width:100%;
+
+    height:58px;
+
+    margin-top:25px;
+
+    border:none;
+
+    border-radius:15px;
+
+    background:linear-gradient(135deg,#d32f2f,#ef5350);
+
+    color:#fff;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.30s;
+
+}
+
+.back-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 10px 25px rgba(0,0,0,.20);
+
+}
+
+/*=========================================
+        Level Colors
+=========================================*/
+
+.level-excellent{
+
+    color:#2e7d32;
+
+    font-weight:bold;
+
+}
+
+.level-vgood{
+
+    color:#1565c0;
+
+    font-weight:bold;
+
+}
+
+.level-good{
+
+    color:#ef6c00;
+
+    font-weight:bold;
+
+}
+
+.level-pass{
+
+    color:#8d6e63;
+
+    font-weight:bold;
+
+}
+
+.level-weak{
+
+    color:#c62828;
+
+    font-weight:bold;
 
 }
