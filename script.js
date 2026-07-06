@@ -15,7 +15,9 @@ const EXAM_API =
 "https://script.google.com/macros/s/AKfycbx15WOpC89mURbDxX9RzsSktMgK57kLpCgXPrLV-jiNtAe0fkdZ2xVIa7LmYzyUvvqB/exec";
 
 const PAYMENT_API =
-"https://script.google.com/macros/s/AKfycbwBobTIyXrG_eQGdeB0DYmiBW0-oxOf7ihSO-_5-Sq94vVprLs_U5gQ6ap0-65p3T4g/exec";
+"https://script.google.com/macros/s/AKfycbya_EAP9U3gfi-T1HO4IjPsKt507VMiypfLziKqbF4kYOLmE3uJ86uAiA1o_rG46EsW/exec";
+const NOTICE_API =
+"https://script.google.com/macros/s/AKfycbyuqs8EZhtcsrDdi5gIzWTf8aCAl6u_JTRS6zRhxzDycsPHhMPpgNgnkvoPnsOCo73L/exec";
 
 //=========================================
 // Variables
@@ -74,6 +76,9 @@ document.getElementById("examCard");
 
 const paymentCard =
 document.getElementById("paymentCard");
+const noticeCard =
+document.getElementById("noticeCard");
+
 
 //=========================================
 // Contents
@@ -90,7 +95,8 @@ document.getElementById("examContent");
 
 const paymentContent =
 document.getElementById("paymentContent");
-
+const noticeContent =
+document.getElementById("noticeContent");
 //=========================================
 // Back Buttons
 //=========================================
@@ -106,13 +112,18 @@ document.getElementById("backExamBtn");
 
 const backPaymentBtn =
 document.getElementById("backPaymentBtn");
+const noticeBtn =
+document.getElementById("noticeBtn");
+
+const backNoticeBtn =
+document.getElementById("backNoticeBtn");
 //=========================================
 // تحميل بيانات الطلاب
 //=========================================
 
-async function loadStudents(){
+async function loadStudents() {
 
-    try{
+    try {
 
         searchBtn.disabled = true;
         searchBtn.innerHTML = "جارى تحميل البيانات...";
@@ -121,24 +132,25 @@ async function loadStudents(){
 
         students = await response.json();
 
-        console.log("Students :", students.length);
+        console.log("Students Loaded:", students.length);
 
         searchBtn.disabled = false;
         searchBtn.innerHTML = "استعلام";
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
         alert("تعذر تحميل بيانات الطلاب");
 
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = "استعلام";
+
     }
 
 }
-
-loadStudents();
 
 //=========================================
 // Events
@@ -177,7 +189,7 @@ homeworkBtn.addEventListener("click", showHomework);
 examBtn.addEventListener("click", showExam);
 
 paymentBtn.addEventListener("click", showPayments);
-
+noticeBtn.addEventListener("click", showNotices);
 //=========================================
 // أزرار الرجوع
 //=========================================
@@ -189,6 +201,7 @@ backBtn.addEventListener("click", function(){
     examCard.classList.add("hidden");
     paymentCard.classList.add("hidden");
 
+noticeBtn.classList.add("hidden");
     result.classList.remove("hidden");
 
 });
@@ -199,7 +212,7 @@ backHomeworkBtn.addEventListener("click", function(){
     homeworkCard.classList.add("hidden");
     examCard.classList.add("hidden");
     paymentCard.classList.add("hidden");
-
+noticeBtn.classList.add("hidden");
     result.classList.remove("hidden");
 
 });
@@ -210,7 +223,7 @@ backExamBtn.addEventListener("click", function(){
     homeworkCard.classList.add("hidden");
     examCard.classList.add("hidden");
     paymentCard.classList.add("hidden");
-
+noticeBtn.classList.add("hidden");
     result.classList.remove("hidden");
 
 });
@@ -221,6 +234,19 @@ backPaymentBtn.addEventListener("click", function(){
     homeworkCard.classList.add("hidden");
     examCard.classList.add("hidden");
     paymentCard.classList.add("hidden");
+    noticeCard.classList.add("hidden");
+
+    result.classList.remove("hidden");
+
+});
+
+backNoticeBtn.addEventListener("click", function(){
+
+    attendanceCard.classList.add("hidden");
+    homeworkCard.classList.add("hidden");
+    examCard.classList.add("hidden");
+    paymentCard.classList.add("hidden");
+    noticeCard.classList.add("hidden");
 
     result.classList.remove("hidden");
 
@@ -243,12 +269,13 @@ function displayStudent(student){
     examCard.classList.add("hidden");
     paymentCard.classList.add("hidden");
 
+noticeCard.classList.add("hidden");
     // إظهار جميع الأزرار
     attendanceBtn.classList.remove("hidden");
     homeworkBtn.classList.remove("hidden");
     examBtn.classList.remove("hidden");
     paymentBtn.classList.remove("hidden");
-
+noticeBtn.classList.remove("hidden");
     // بيانات الطالب
     document.getElementById("studentCode").textContent =
         student.code;
@@ -380,43 +407,15 @@ async function showPayments(){
 
         let html = `
 
-<div class="payment-summary">
-
-    <div class="pay-box">
-        <span>💳 الاشتراك</span>
-        <strong>${last.subscription}</strong>
-    </div>
-
-    <div class="pay-box">
-        <span>✅ المدفوع</span>
-        <strong>${last.paid}</strong>
-    </div>
-
-    <div class="pay-box">
-        <span>🟠 المتبقى</span>
-        <strong>${last.remaining}</strong>
-    </div>
-
-    <div class="pay-box">
-        <span>🔴 إجمالى المستحق</span>
-        <strong>${last.total}</strong>
-    </div>
-
-</div>
-
 <table class="attendance-table">
 
 <tr>
 
 <th>الشهر</th>
 
-<th>الاشتراك</th>
-
 <th>المدفوع</th>
 
 <th>المتبقى</th>
-
-<th>مديونية سابقة</th>
 
 <th>إجمالى المستحق</th>
 
@@ -432,13 +431,9 @@ async function showPayments(){
 
 <td>${item.month}</td>
 
-<td>${item.subscription}</td>
-
 <td>${item.paid}</td>
 
 <td>${item.remaining}</td>
-
-<td>${item.previous}</td>
 
 <td>${item.total}</td>
 
@@ -494,11 +489,11 @@ async function showAttendance() {
         <table class="attendance-table">
 
         <tr>
-            <th>الدرس</th>
+            <th>الحصة</th>
 
                 <th>التاريخ</th>
 
-                <th>الحالة</th
+                <th>الحالة</th>
         </tr>
         `;
 
@@ -564,13 +559,13 @@ async function showHomework() {
 
         <tr>
 
-            <th>الواجب</th>
+            <th>الحصة</th>
 
             <th>التاريخ</th>
 
-            <th>الدرجة</th>
+            <th>درجة الطالب</th>
 
-            <th>من</th>
+            <th>الدرجة النهائية</th>
 
         </tr>
         `;
@@ -644,9 +639,9 @@ async function showExam() {
 
             <th>التاريخ</th>
 
-            <th>الدرجة</th>
+            <th>درجة الطالب</th>
 
-            <th>من</th>
+            <th>الدرجة النهائية</th>
 
         </tr>
         `;
@@ -680,4 +675,95 @@ async function showExam() {
 
     }
 
+}
+async function showNotices(){
+
+    result.classList.add("hidden");
+
+    attendanceCard.classList.add("hidden");
+
+    homeworkCard.classList.add("hidden");
+
+    examCard.classList.add("hidden");
+
+    paymentCard.classList.add("hidden");
+
+    noticeCard.classList.remove("hidden");
+
+    noticeContent.innerHTML="جارى تحميل التنبيهات...";
+
+    try{
+
+        const response = await fetch(
+
+            NOTICE_API + "?code=" + currentStudent.code
+
+        );
+
+        const data = await response.json();
+
+        if(data.length==0){
+
+            noticeContent.innerHTML=
+
+            "<h3>لا توجد تنبيهات لهذا الطالب</h3>";
+
+            return;
+
+        }
+
+        let html=`
+
+<div class="table-wrapper">
+
+<table class="attendance-table">
+
+<tr>
+
+<th>الحصة</th>
+
+<th>التاريخ</th>
+
+<th>التنبيه أو الملاحظة</th>
+
+</tr>
+
+`;
+
+        data.forEach(item=>{
+
+            html+=`
+
+<tr>
+
+<td>${item.lesson}</td>
+
+<td>${item.date}</td>
+
+<td>${item.notice}</td>
+
+</tr>
+
+`;
+
+        });
+
+        html+="</table></div>";
+
+        noticeContent.innerHTML=html;
+
+    }
+
+    catch(e){
+
+        noticeContent.innerHTML=
+
+        "<h3>حدث خطأ أثناء تحميل التنبيهات</h3>";
+
+    }
+
+
+// تحميل بيانات الطلاب عند فتح الصفحة
+loadStudents();
+}
 }

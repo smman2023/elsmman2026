@@ -6,16 +6,16 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+content="width=device-width,initial-scale=1.0">
 
 <title>
 
-أكاديمية السمان | بوابة ولى الأمر
+البوابة الذكية لمتابعة ولي الأمر
 
 </title>
 
 <meta name="theme-color"
-content="#0d47a1">
+content="#0D47A1">
 
 <link rel="preconnect"
 href="https://fonts.googleapis.com">
@@ -24,7 +24,7 @@ href="https://fonts.googleapis.com">
 href="https://fonts.gstatic.com"
 crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap"
 rel="stylesheet">
 
 <link rel="stylesheet"
@@ -37,34 +37,40 @@ href="style.css">
 
 <body>
 
+<div class="page-bg"></div>
+
 <div class="container">
 
-<!--=========================
-        Logo
-==========================-->
+<!--==========================
+        Header
+===========================-->
+
+<header class="hero">
 
 <img
 src="logo.png"
 class="logo"
-alt="Academy Logo">
+alt="Logo">
 
-<h1 class="main-title">
+<h1 class="hero-title">
 
-أكاديمية مستر السمان
+🎓 البوابة الذكية لمتابعة ولي الأمر
 
 </h1>
 
-<p class="sub-title">
+<p class="hero-subtitle">
 
-بوابة ولى الأمر الإلكترونية
+منصة إلكترونية متطورة لمتابعة حضور الطالب ودرجاته والمدفوعات والتنبيهات الهامة
 
 </p>
 
-<div class="title-line"></div>
+<div class="hero-line"></div>
 
-<!--=========================
+</header>
+
+<!--==========================
         Banner
-==========================-->
+===========================-->
 
 <div class="banner">
 
@@ -74,9 +80,19 @@ alt="Banner">
 
 </div>
 
-<!--=========================
-        Search
-==========================-->
+<!--==========================
+        Search Card
+===========================-->
+
+<div class="search-card">
+
+<div class="search-title">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+تسجيل الدخول
+
+</div>
 
 <div class="search-box">
 
@@ -86,7 +102,7 @@ type="text"
 
 id="codeInput"
 
-placeholder="كود الطالب"
+placeholder="أدخل كود الطالب"
 
 autocomplete="off">
 
@@ -96,7 +112,7 @@ type="password"
 
 id="passwordInput"
 
-placeholder="الرقم السرى"
+placeholder="أدخل الرقم السري"
 
 autocomplete="off">
 
@@ -106,347 +122,444 @@ id="searchBtn"
 
 class="search-btn">
 
-<i class="fa-solid fa-magnifying-glass"></i>
+<i class="fa-solid fa-arrow-right-to-bracket"></i>
 
 استعلام
 
 </button>
 
 </div>
+
+</div>
+<div id="notFound" class="message error hidden"></div>
 <!--====================================
         بيانات الطالب
 =====================================-->
 
 <div id="result" class="result-card hidden">
 
-    <h2 class="result-title">
+<div class="card-header">
 
-        <i class="fa-solid fa-user-graduate"></i>
+<div class="card-icon">
 
-        بيانات الطالب
-
-    </h2>
-
-    <div class="result-row">
-
-        <span class="result-label">
-
-            <i class="fa-solid fa-id-card"></i>
-
-            كود الطالب
-
-        </span>
-
-        <span id="studentCode" class="result-value"></span>
-
-    </div>
-
-    <div class="result-row">
-
-        <span class="result-label">
-
-            <i class="fa-solid fa-user"></i>
-
-            اسم الطالب
-
-        </span>
-
-        <span id="studentName" class="result-value"></span>
-
-    </div>
-
-    <div class="result-row">
-
-        <span class="result-label">
-
-            <i class="fa-solid fa-school"></i>
-
-            الصف الدراسى
-
-        </span>
-
-        <span id="studentGrade" class="result-value"></span>
-
-    </div>
-
-    <div class="result-row">
-
-        <span class="result-label">
-
-            <i class="fa-solid fa-users"></i>
-
-            المجموعة
-
-        </span>
-
-        <span id="studentGroup" class="result-value"></span>
-
-    </div>
-
-    <div class="result-row">
-
-        <span class="result-label">
-
-            <i class="fa-brands fa-whatsapp"></i>
-
-            واتساب الطالب
-
-        </span>
-
-        <span id="studentWhatsapp" class="result-value"></span>
-
-    </div>
-
-    <div class="result-row">
-
-        <span class="result-label">
-
-            <i class="fa-brands fa-whatsapp"></i>
-
-            واتساب ولى الأمر
-
-        </span>
-
-        <span id="parentWhatsapp" class="result-value"></span>
-
-    </div>
-
-    <!--=========================
-            الأزرار
-    ==========================-->
-
-    <div class="attendance-btn-box">
-
-        <button
-            id="attendanceBtn"
-            class="attendance-btn hidden">
-
-            <i class="fa-solid fa-calendar-check"></i>
-
-            الاستعلام عن الحضور
-
-        </button>
-
-    </div>
-
-    <div class="attendance-btn-box">
-
-        <button
-            id="homeworkBtn"
-            class="attendance-btn hidden">
-
-            <i class="fa-solid fa-book"></i>
-
-            الاستعلام عن درجات الواجب
-
-        </button>
-
-    </div>
-
-    <div class="attendance-btn-box">
-
-        <button
-            id="examBtn"
-            class="attendance-btn hidden">
-
-            <i class="fa-solid fa-file-pen"></i>
-
-            الاستعلام عن درجات الامتحانات
-
-        </button>
-
-    </div>
-
-    <div class="attendance-btn-box">
-
-        <button
-            id="paymentBtn"
-            class="attendance-btn hidden">
-
-            <i class="fa-solid fa-money-bill-wave"></i>
-
-            الاستعلام عن المدفوعات
-
-        </button>
-
-    </div>
-
-</div>
-<!--====================================
-        بطاقة الحضور
-=====================================-->
-
-<div id="attendanceCard" class="result-card hidden">
-
-    <h2 class="result-title">
-
-        <i class="fa-solid fa-calendar-check"></i>
-
-        سجل حضور الطالب
-
-    </h2>
-
-    <div id="attendanceContent"></div>
-
-    <button id="backBtn" class="back-btn">
-
-        <i class="fa-solid fa-arrow-right"></i>
-
-        رجوع
-
-    </button>
+<i class="fa-solid fa-user-graduate"></i>
 
 </div>
 
+<div>
 
-<!--====================================
-        بطاقة الواجب
-=====================================-->
+<h2 class="card-title">
 
-<div id="homeworkCard" class="result-card hidden">
+بيانات الطالب
 
-    <h2 class="result-title">
+</h2>
 
-        <i class="fa-solid fa-book"></i>
+<p class="card-subtitle">
 
-        درجات الواجب
+مرحباً بك فى البوابة الذكية لمتابعة ولى الأمر
 
-    </h2>
-
-    <div id="homeworkContent"></div>
-
-    <button id="backHomeworkBtn" class="back-btn">
-
-        <i class="fa-solid fa-arrow-right"></i>
-
-        رجوع
-
-    </button>
+</p>
 
 </div>
 
+</div>
 
+<div class="student-grid">
+
+<div class="info-card">
+
+<i class="fa-solid fa-id-card"></i>
+
+<span>كود الطالب</span>
+
+<strong id="studentCode"></strong>
+
+</div>
+
+<div class="info-card">
+
+<i class="fa-solid fa-user"></i>
+
+<span>اسم الطالب</span>
+
+<strong id="studentName"></strong>
+
+</div>
+
+<div class="info-card">
+
+<i class="fa-solid fa-school"></i>
+
+<span>الصف الدراسى</span>
+
+<strong id="studentGrade"></strong>
+
+</div>
+
+<div class="info-card">
+
+<i class="fa-solid fa-users"></i>
+
+<span>المجموعة</span>
+
+<strong id="studentGroup"></strong>
+
+</div>
+
+<div class="info-card">
+
+<i class="fa-brands fa-whatsapp"></i>
+
+<span>واتساب الطالب</span>
+
+<strong id="studentWhatsapp"></strong>
+
+</div>
+
+<div class="info-card">
+
+<i class="fa-solid fa-phone"></i>
+
+<span>واتساب ولى الأمر</span>
+
+<strong id="parentWhatsapp"></strong>
+
+</div>
+
+</div>
+
+<hr class="section-line">
+
+<h3 class="services-title">
+
+الخدمات الإلكترونية
+
+</h3>
+<!--=========================
+        الخدمات الإلكترونية
+==========================-->
+
+<div class="service-grid">
+
+<!-- الحضور -->
+
+<button
+id="attendanceBtn"
+class="service-card attendance-btn hidden">
+
+<div class="service-icon">
+
+<i class="fa-solid fa-calendar-check"></i>
+
+</div>
+
+<div class="service-text">
+
+<h3>الحضور</h3>
+
+<p>استعلام عن سجل حضور الطالب</p>
+
+</div>
+
+<i class="fa-solid fa-angle-left arrow"></i>
+
+</button>
+
+
+<!-- الواجب -->
+
+<button
+id="homeworkBtn"
+class="service-card homework-btn hidden">
+
+<div class="service-icon">
+
+<i class="fa-solid fa-book-open"></i>
+
+</div>
+
+<div class="service-text">
+
+<h3>الواجبات</h3>
+
+<p>متابعة درجات الواجبات</p>
+
+</div>
+
+<i class="fa-solid fa-angle-left arrow"></i>
+
+</button>
+
+
+<!-- الامتحانات -->
+
+<button
+id="examBtn"
+class="service-card exam-btn hidden">
+
+<div class="service-icon">
+
+<i class="fa-solid fa-file-pen"></i>
+
+</div>
+
+<div class="service-text">
+
+<h3>الامتحانات</h3>
+
+<p>نتائج ودرجات الامتحانات</p>
+
+</div>
+
+<i class="fa-solid fa-angle-left arrow"></i>
+
+</button>
+
+
+<!-- المدفوعات -->
+
+<button
+id="paymentBtn"
+class="service-card payment-btn hidden">
+
+<div class="service-icon">
+
+<i class="fa-solid fa-money-bill-wave"></i>
+
+</div>
+
+<div class="service-text">
+
+<h3>المدفوعات</h3>
+
+<p>عرض سجل المدفوعات</p>
+
+</div>
+
+<i class="fa-solid fa-angle-left arrow"></i>
+
+</button>
+
+
+<!-- التنبيهات -->
+
+<button
+id="noticeBtn"
+class="service-card notice-btn hidden">
+
+<div class="service-icon">
+
+<i class="fa-solid fa-bell"></i>
+
+</div>
+
+<div class="service-text">
+
+<h3>التنبيهات الهامة</h3>
+
+<p>الإشعارات والملاحظات الخاصة بالطالب</p>
+
+</div>
+
+<i class="fa-solid fa-angle-left arrow"></i>
+
+</button>
+
+</div>
+
+</div>
 <!--====================================
-        بطاقة الامتحانات
+        سجل الحضور
 =====================================-->
 
-<div id="examCard" class="result-card hidden">
+<div id="attendanceCard" class="page-card hidden">
 
-    <h2 class="result-title">
+<div class="page-header attendance-header">
 
-        <i class="fa-solid fa-file-pen"></i>
+<div>
 
+<h2>
+
+<i class="fa-solid fa-calendar-check"></i>
+
+سجل حضور الطالب
+
+</h2>
+
+<p>
+
+متابعة جميع الحصص وحالة حضور الطالب
+
+</p>
+
+</div>
+
+</div>
+
+<div id="attendanceContent"></div>
+
+<button id="backBtn" class="back-btn">
+
+<i class="fa-solid fa-arrow-right"></i>
+
+الرجوع إلى الصفحة الرئيسية
+
+</button>
+
+</div>
+<!--====================================
+        درجات الواجبات
+=====================================-->
+
+<div id="homeworkCard" class="page-card hidden">
+
+<div class="page-header homework-header">
+
+<div>
+
+<h2>
+
+<i class="fa-solid fa-book-open"></i>
+
+درجات الواجبات
+
+</h2>
+
+<p>
+
+متابعة درجات الواجبات الأسبوعية
+
+</p>
+
+</div>
+
+</div>
+
+<div id="homeworkContent"></div>
+
+<button id="backHomeworkBtn" class="back-btn">
+
+<i class="fa-solid fa-arrow-right"></i>
+
+الرجوع إلى الصفحة الرئيسية
+
+</button>
+
+</div>
+<!--====================================
         درجات الامتحانات
+=====================================-->
 
-    </h2>
+<div id="examCard" class="page-card hidden">
 
-    <div id="examContent"></div>
+<div class="page-header exam-header">
 
-    <button id="backExamBtn" class="back-btn">
+<div>
 
-        <i class="fa-solid fa-arrow-right"></i>
+<h2>
 
-        رجوع
+<i class="fa-solid fa-file-pen"></i>
 
-    </button>
+نتائج الامتحانات
+
+</h2>
+
+<p>
+
+عرض نتائج جميع الامتحانات
+
+</p>
 
 </div>
 
+</div>
 
+<div id="examContent"></div>
+
+<button id="backExamBtn" class="back-btn">
+
+<i class="fa-solid fa-arrow-right"></i>
+
+الرجوع إلى الصفحة الرئيسية
+
+</button>
+
+</div>
 <!--====================================
-        بطاقة المدفوعات
-=====================================-->
-
-<div id="paymentCard" class="result-card hidden">
-
-    <h2 class="result-title">
-
-        <i class="fa-solid fa-money-bill-wave"></i>
-
         المدفوعات
+=====================================-->
 
-    </h2>
+<div id="paymentCard" class="page-card hidden">
 
-    <div id="paymentContent"></div>
+<div class="page-header payment-header">
 
-    <button id="backPaymentBtn" class="back-btn">
+<div>
 
-        <i class="fa-solid fa-arrow-right"></i>
+<h2>
 
-        رجوع
+<i class="fa-solid fa-money-bill-wave"></i>
 
-    </button>
+سجل المدفوعات
+
+</h2>
+
+<p>
+
+عرض جميع المدفوعات والمبالغ المستحقة
+
+</p>
 
 </div>
 
+</div>
 
-<!--====================================
-        رسالة عدم العثور
-=====================================-->
+<div id="paymentContent"></div>
 
-<div id="notFound" class="result-card hidden">
+<button id="backPaymentBtn" class="back-btn">
 
-    <div class="not-found">
+<i class="fa-solid fa-arrow-right"></i>
 
-        <i class="fa-solid fa-circle-xmark"></i>
+الرجوع إلى الصفحة الرئيسية
 
-        <h2>
-
-            كود الطالب أو كلمة السر غير صحيحة
-
-        </h2>
-
-    </div>
+</button>
 
 </div>
 <!--====================================
-                Footer
+        التنبيهات
 =====================================-->
 
-<footer class="footer">
+<div id="noticeCard" class="page-card hidden">
 
-    <h3>
+<div class="page-header notice-header">
 
-        أكاديمية مستر السمان
+<div>
 
-    </h3>
+<h2>
 
-    <p>
+<i class="fa-solid fa-bell"></i>
 
-        منصة إلكترونية لمتابعة مستوى الطالب
+التنبيهات الهامة
 
-    </p>
+</h2>
 
-    <a
+<p>
 
-        href="https://www.facebook.com/profile.php?id=100093795507056"
+جميع الإشعارات والملاحظات الخاصة بالطالب
 
-        target="_blank"
-
-        class="facebook-btn">
-
-        <i class="fa-brands fa-facebook-f"></i>
-
-        صفحة الأكاديمية على فيسبوك
-
-    </a>
-
-    <p class="copyright">
-
-        © جميع الحقوق محفوظة 2026
-
-    </p>
-
-</footer>
+</p>
 
 </div>
 
-<!--====================================
-            JavaScript
-=====================================-->
+</div>
 
-<script src="script.js"></script>
+<div id="noticeContent"></div>
 
-</body>
+<button id="backNoticeBtn" class="back-btn">
 
-</html>
+<i class="fa-solid fa-arrow-right"></i>
+
+الرجوع إلى الصفحة الرئيسية
+
+</button>
+
+</div>
