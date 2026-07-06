@@ -455,7 +455,11 @@ async function showExam(){
 
         html += "</table>";
 
-        examContent.innerHTML = html;
+        examContent.innerHTML = `
+<div class="table-wrapper">
+${html}
+</div>
+`;
 
     }
 
