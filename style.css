@@ -1,107 +1,86 @@
-/*==================================================
-        أكاديمية مستر السمان - النسخة الاحترافية
-==================================================*/
+/*=========================================
+        Google Font
+=========================================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+
+/*=========================================
+        Reset
+=========================================*/
 
 *{
+
     margin:0;
     padding:0;
     box-sizing:border-box;
-}
 
-:root{
-
-    --primary:#0d47a1;
-    --primary2:#1565c0;
-    --gold:#d4af37;
-    --white:#ffffff;
-    --text:#222;
-    --gray:#f5f8fc;
-    --shadow:0 12px 35px rgba(0,0,0,.12);
-
-}
-
-html{
-    scroll-behavior:smooth;
 }
 
 body{
 
-    font-family:"Cairo",sans-serif;
+    font-family:'Cairo',sans-serif;
+
+    background:#eef3fb;
+
     direction:rtl;
-    background:linear-gradient(135deg,#eef5ff,#ffffff);
-    color:var(--text);
-    min-height:100vh;
+
+    color:#222;
 
 }
 
-.hidden{
-    display:none;
-}
+/*=========================================
+        Container
+=========================================*/
 
 .container{
 
     width:95%;
-    max-width:760px;
-    margin:40px auto;
-    background:#fff;
-    border-radius:28px;
-    padding:35px;
-    box-shadow:var(--shadow);
 
-    animation:fade .5s ease;
+    max-width:850px;
+
+    margin:auto;
+
+    padding:20px;
 
 }
 
-@keyframes fade{
-
-    from{
-        opacity:0;
-        transform:translateY(25px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-
-}
-
-/*==========================
+/*=========================================
         Logo
-==========================*/
+=========================================*/
 
 .logo{
 
-    width:200px;
-    height:200px;
-
     display:block;
-    margin:auto;
 
-    object-fit:contain;
+    width:120px;
+
+    margin:20px auto;
 
 }
 
-/*==========================
+/*=========================================
         Titles
-==========================*/
+=========================================*/
 
 .main-title{
 
     text-align:center;
-    color:var(--primary);
-    font-size:40px;
-    font-weight:800;
 
-    margin-top:18px;
+    color:#0d47a1;
+
+    font-size:34px;
+
+    font-weight:800;
 
 }
 
 .sub-title{
 
     text-align:center;
-    color:#666;
-    font-size:25px;
+
+    color:#555;
+
+    font-size:20px;
 
     margin-top:8px;
 
@@ -109,106 +88,99 @@ body{
 
 .title-line{
 
-    width:80px;
+    width:120px;
+
     height:5px;
 
-    margin:25px auto 30px;
+    background:#f9a825;
 
-    background:var(--gold);
+    margin:18px auto 30px;
 
-    border-radius:50px;
+    border-radius:10px;
 
 }
 
-/*==========================
+/*=========================================
         Banner
-==========================*/
+=========================================*/
 
 .banner{
 
-    width:100%;
-    overflow:hidden;
-
-    border-radius:22px;
-
-    box-shadow:0 10px 25px rgba(0,0,0,.15);
-
-    margin-bottom:35px;
+    margin-bottom:30px;
 
 }
 
 .banner img{
 
     width:100%;
-    display:block;
 
-    border-radius:22px;
+    border-radius:20px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.15);
 
 }
 
-/*==========================
+/*=========================================
         Search Box
-==========================*/
+=========================================*/
 
 .search-box{
 
-    display:flex;
-    flex-direction:column;
+    background:#fff;
 
-    gap:20px;
+    padding:25px;
 
-    margin-bottom:35px;
+    border-radius:20px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.10);
+
+    margin-bottom:30px;
 
 }
 
 .search-box input{
 
     width:100%;
-    height:60px;
 
-    border:2px solid #d9e3f3;
+    height:58px;
 
-    border-radius:16px;
+    border:2px solid #ddd;
 
-    padding:0 20px;
+    border-radius:15px;
+
+    padding:0 15px;
 
     font-size:20px;
 
-    font-weight:900;
-
-    text-align:center;
-
-    color:#000;
+    margin-bottom:15px;
 
     transition:.30s;
 
 }
 
-
 .search-box input:focus{
 
     outline:none;
 
-    border-color:var(--primary);
-
-    box-shadow:0 0 12px rgba(13,71,161,.18);
+    border-color:#0d47a1;
 
 }
 
 .search-btn{
 
     width:100%;
-    height:62px;
+
+    height:60px;
 
     border:none;
 
-    border-radius:16px;
+    border-radius:15px;
 
-    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    background:linear-gradient(135deg,#0d47a1,#1976d2);
 
     color:#fff;
 
-    font-size:25px;
+    font-size:22px;
 
     font-weight:bold;
 
@@ -222,54 +194,24 @@ body{
 
     transform:translateY(-2px);
 
-    box-shadow:0 12px 25px rgba(13,71,161,.25);
+    box-shadow:0 10px 25px rgba(0,0,0,.18);
 
 }
-
-.search-btn i{
-
-    margin-left:10px;
-
-}
-.search-box input::placeholder{
-
-    color:#666666;
-
-    font-size:20px;
-
-    font-weight:800;
-
-    text-align:center;
-
-    opacity:1;
-
-}
-.search-box input:focus::placeholder{
-
-    opacity:0;
-
-    transition:opacity .2s ease;
-
-}
-/*==================================================
-            بطاقة بيانات الطالب
-==================================================*/
+/*=========================================
+        Result Card
+=========================================*/
 
 .result-card{
 
-    margin-top:35px;
-
     background:#fff;
 
-    border-radius:22px;
+    border-radius:20px;
 
-    padding:30px;
+    padding:25px;
 
-    box-shadow:0 12px 30px rgba(0,0,0,.12);
+    margin-top:25px;
 
-    border-top:6px solid var(--gold);
-
-    animation:fade .4s ease;
+    box-shadow:0 8px 25px rgba(0,0,0,.12);
 
 }
 
@@ -277,15 +219,27 @@ body{
 
     text-align:center;
 
-    color:var(--primary);
+    color:#0d47a1;
 
-    font-size:30px;
+    font-size:28px;
 
-    font-weight:bold;
+    margin-bottom:25px;
 
-    margin-bottom:30px;
+    font-weight:800;
 
 }
+
+.result-title i{
+
+    color:#f9a825;
+
+    margin-left:8px;
+
+}
+
+/*=========================================
+        Student Data
+=========================================*/
 
 .result-row{
 
@@ -295,9 +249,11 @@ body{
 
     align-items:center;
 
-    padding:16px 0;
+    padding:15px;
 
-    border-bottom:1px solid #ececec;
+    border-bottom:1px solid #eee;
+
+    font-size:20px;
 
 }
 
@@ -309,402 +265,35 @@ body{
 
 .result-label{
 
-    display:flex;
+    font-weight:700;
 
-    align-items:center;
-
-    gap:10px;
-
-    color:var(--primary);
-
-    font-size:20px;
-
-    font-weight:bold;
+    color:#444;
 
 }
 
 .result-label i{
 
-    color:var(--gold);
+    color:#0d47a1;
 
-    width:28px;
-
-    text-align:center;
+    margin-left:8px;
 
 }
 
 .result-value{
 
-    font-size:20px;
-
-    font-weight:600;
-
-    color:#333;
-
-}
-
-/*==================================================
-            اختيار الطلاب
-==================================================*/
-
-.student-list{
-
-    margin-top:30px;
-
-}
-
-.student-header{
-
-    text-align:center;
-
-    margin-bottom:25px;
-
-}
-
-.student-header-icon{
-
-    width:85px;
-
-    height:85px;
-
-    margin:auto;
-
-    border-radius:50%;
-
-    background:linear-gradient(135deg,var(--primary),var(--primary2));
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    color:#fff;
-
-    font-size:34px;
-
-    margin-bottom:18px;
-
-}
-
-.student-header h2{
-
-    color:var(--primary);
-
-    font-size:28px;
-
-    margin-bottom:10px;
-
-}
-
-.student-header p{
-
-    color:#666;
-
-}
-
-.student-card-new{
-
-    background:#fff;
-
-    border-radius:18px;
-
-    padding:25px;
-
-    margin-bottom:20px;
-
-    border-right:5px solid var(--gold);
-
-    box-shadow:0 8px 20px rgba(0,0,0,.10);
-
-    transition:.30s;
-
-}
-
-.student-card-new:hover{
-
-    transform:translateY(-4px);
-
-}
-
-.student-name{
-
-    color:var(--primary);
-
-    font-size:26px;
-
-    font-weight:bold;
-
-    margin-bottom:20px;
-
-    text-align:center;
-
-}
-
-.student-open-btn{
-
-    width:100%;
-
-    height:58px;
-
-    border:none;
-
-    border-radius:14px;
-
-    background:linear-gradient(135deg,var(--primary),var(--primary2));
-
-    color:#fff;
-
-    font-size:20px;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-}
-
-.student-open-btn:hover{
-
-    background:linear-gradient(135deg,var(--gold),#f4cf55);
-
     color:#000;
 
-}
-
-/*==================================================
-            الطالب غير موجود
-==================================================*/
-
-.not-found{
-
-    margin-top:25px;
-
-    background:#fff4f4;
-
-    border:2px solid #ffbcbc;
-
-    border-radius:18px;
-
-    padding:25px;
-
-    text-align:center;
-
-    color:#c62828;
-
-    font-size:22px;
-
     font-weight:bold;
 
 }
 
-.not-found i{
+/*=========================================
+        Attendance Buttons
+=========================================*/
 
-    display:block;
-
-    font-size:40px;
-
-    margin-bottom:15px;
-
-}
-
-/*==================================================
-                    Footer
-==================================================*/
-
-.footer{
-
-    margin-top:45px;
-
-    padding-top:25px;
-
-    border-top:1px solid #ececec;
-
-    text-align:center;
-
-}
-
-/* عنوان الفوتر */
-
-.footer h3{
-
-    color:#000;
-
-    font-size:24px;
-
-    font-weight:800;
-
-    margin-bottom:12px;
-
-}
-
-/* النص الأول */
-
-.footer p{
-
-    color:#C9A227;
-
-    font-size:19px;
-
-    font-weight:700;
-
-    margin:8px 0;
-
-}
-
-/* آخر سطر */
-
-.footer p:last-child{
-
-    color:#1565c0;
-
-    font-size:18px;
-
-    font-weight:700;
-
-}
-
-/*==================================================
-                Responsive
-==================================================*/
-
-@media(max-width:768px){
-
-.container{
-
-    width:95%;
-
-    padding:22px;
-
-}
-
-.logo{
-
-    width:95px;
-
-    height:95px;
-
-}
-
-.main-title{
-
-    font-size:32px;
-
-}
-
-.sub-title{
-
-    font-size:16px;
-
-}
-
-.banner img{
-
-    border-radius:18px;
-
-}
-
-.search-box input{
-
-    height:56px;
-
-    font-size:18px;
-
-}
-
-.search-btn{
-
-    height:56px;
-
-    font-size:19px;
-
-}
-
-.result-title{
-
-    font-size:25px;
-
-}
-
-.result-row{
-
-    flex-direction:column;
-
-    align-items:flex-start;
-
-    gap:8px;
-
-}
-
-.result-label{
-
-    font-size:18px;
-
-}
-
-.result-value{
-
-    font-size:18px;
-
-}
-
-.student-name{
-
-    font-size:22px;
-
-}
-
-.student-open-btn{
-
-    font-size:18px;
-
-}
-
-}.facebook-btn{
-
-    display:block;
-
-    width:100%;
-
-    margin-top:20px;
-
-    padding:16px;
-
-    background:#1877f2;
-
-    color:#fff;
-
-    text-align:center;
-
-    border-radius:15px;
-
-    font-size:20px;
-
-    font-weight:bold;
-
-    transition:.3s;
-
-}
-
-.facebook-btn:hover{
-
-    background:#166fe5;
-
-    transform:translateY(-2px);
-
-}
-
-.facebook-btn i{
-
-    margin-left:10px;
-
-}
 .attendance-btn-box{
 
-    margin-top:25px;
-
-    padding-top:25px;
-
-    border-top:2px solid #ececec;
+    margin-top:20px;
 
 }
 
@@ -712,109 +301,41 @@ body{
 
     width:100%;
 
-    height:60px;
+    height:58px;
 
     border:none;
 
-    border-radius:16px;
+    border-radius:15px;
 
-    background:linear-gradient(135deg,#0b8f4d,#17b66a);
+    background:linear-gradient(135deg,#2e7d32,#43a047);
 
     color:#fff;
 
-    font-size:22px;
+    font-size:21px;
 
     font-weight:bold;
 
     cursor:pointer;
 
-    transition:.3s;
+    transition:.30s;
+
+    box-shadow:0 6px 15px rgba(46,125,50,.30);
 
 }
 
 .attendance-btn:hover{
 
+    background:linear-gradient(135deg,#1b5e20,#2e7d32);
+
     transform:translateY(-2px);
 
-}
-.attendance-table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
-    margin-top:20px;
+    box-shadow:0 10px 25px rgba(46,125,50,.45);
 
 }
 
-.attendance-table th{
+.attendance-btn i{
 
-    background:#0d47a1;
-
-    color:#fff;
-
-    padding:15px;
-
-}
-
-.attendance-table td{
-
-    border:1px solid #ddd;
-
-    padding:14px;
-
-    text-align:center;
-
-    font-size:18px;
-
-}
-
-.attendance-table tr:nth-child(even){
-
-    background:#f7f9fc;
-
-}
-/*=========================================
-        Exam Card
-=========================================*/
-
-.exam-table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
-    margin-top:20px;
-
-}
-
-.exam-table th{
-
-    background:#0d47a1;
-
-    color:#fff;
-
-    padding:15px;
-
-    font-size:18px;
-
-}
-
-.exam-table td{
-
-    border:1px solid #ddd;
-
-    padding:14px;
-
-    text-align:center;
-
-    font-size:18px;
-
-}
-
-.exam-table tr:nth-child(even){
-
-    background:#f7f9fc;
+    margin-left:10px;
 
 }
 
@@ -834,11 +355,11 @@ body{
 
     border-radius:15px;
 
-    background:linear-gradient(135deg,#d32f2f,#ef5350);
+    background:linear-gradient(135deg,#c62828,#e53935);
 
     color:#fff;
 
-    font-size:22px;
+    font-size:21px;
 
     font-weight:bold;
 
@@ -852,83 +373,195 @@ body{
 
     transform:translateY(-2px);
 
-    box-shadow:0 10px 25px rgba(0,0,0,.20);
+    box-shadow:0 10px 25px rgba(0,0,0,.18);
 
 }
 
 /*=========================================
-        Level Colors
+        Hidden
 =========================================*/
 
-.level-excellent{
+.hidden{
+
+    display:none;
+
+}
+/*=========================================
+        Tables
+=========================================*/
+
+.attendance-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+    background:#fff;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+.attendance-table th{
+
+    background:#0d47a1;
+
+    color:#fff;
+
+    padding:15px;
+
+    text-align:center;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+}
+
+.attendance-table td{
+
+    padding:14px;
+
+    text-align:center;
+
+    border-bottom:1px solid #eee;
+
+    font-size:17px;
+
+}
+
+.attendance-table tr:nth-child(even){
+
+    background:#f7f9fc;
+
+}
+
+.attendance-table tr:hover{
+
+    background:#eef5ff;
+
+}
+
+/*=========================================
+        Payment Summary
+=========================================*/
+
+.payment-summary{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:15px;
+
+    margin-bottom:25px;
+
+}
+
+.pay-box{
+
+    background:#fff;
+
+    border-radius:15px;
+
+    padding:18px;
+
+    text-align:center;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.10);
+
+}
+
+.pay-box span{
+
+    display:block;
+
+    font-size:17px;
+
+    color:#666;
+
+    margin-bottom:8px;
+
+}
+
+.pay-box strong{
+
+    font-size:28px;
+
+    color:#0d47a1;
+
+}
+
+/*=========================================
+        Success & Warning
+=========================================*/
+
+.success-box{
+
+    background:#e8f5e9;
 
     color:#2e7d32;
 
-    font-weight:bold;
+    padding:18px;
 
-}
+    border-radius:15px;
 
-.level-vgood{
+    text-align:center;
 
-    color:#1565c0;
-
-    font-weight:bold;
-
-}
-
-.level-good{
-
-    color:#ef6c00;
+    font-size:22px;
 
     font-weight:bold;
 
-}
-
-.level-pass{
-
-    color:#8d6e63;
-
-    font-weight:bold;
+    margin-bottom:20px;
 
 }
 
-.level-weak{
+.warning-box{
+
+    background:#ffebee;
 
     color:#c62828;
 
+    padding:18px;
+
+    border-radius:15px;
+
+    text-align:center;
+
+    font-size:22px;
+
     font-weight:bold;
 
-}
-/*==============================
-    تحسين الجداول على الهاتف
-==============================*/
-
-@media (max-width:768px){
-
-    .attendance-table{
-
-        width:100%;
-        margin:0px auto;
-        font-size:15px;
-
-    }
-
-    .attendance-table th,
-    .attendance-table td{
-
-        padding:10px 6px;
-
-    }
+    margin-bottom:20px;
 
 }
-/*==============================
-      الجداول على الهاتف
-==============================*/
+
+.warning-box strong{
+
+    display:block;
+
+    margin-top:10px;
+
+    font-size:32px;
+
+}
+
+/*=========================================
+        Table Wrapper
+=========================================*/
 
 .table-wrapper{
 
     width:100%;
+
     overflow-x:auto;
+
     -webkit-overflow-scrolling:touch;
 
 }
@@ -936,4 +569,290 @@ body{
 .table-wrapper table{
 
     min-width:650px;
+
+}
+/*=========================================
+        Not Found
+=========================================*/
+
+.not-found{
+
+    text-align:center;
+
+    padding:40px 20px;
+
+}
+
+.not-found i{
+
+    font-size:70px;
+
+    color:#d32f2f;
+
+    margin-bottom:20px;
+
+}
+
+.not-found h2{
+
+    color:#d32f2f;
+
+    font-size:28px;
+
+    line-height:1.8;
+
+}
+
+/*=========================================
+        Footer
+=========================================*/
+
+.footer{
+
+    margin-top:40px;
+
+    background:#0d47a1;
+
+    color:#fff;
+
+    border-radius:20px;
+
+    padding:30px 20px;
+
+    text-align:center;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.15);
+
+}
+
+.footer h3{
+
+    font-size:28px;
+
+    margin-bottom:10px;
+
+}
+
+.footer p{
+
+    font-size:18px;
+
+    margin:8px 0;
+
+}
+
+.facebook-btn{
+
+    display:inline-block;
+
+    margin-top:20px;
+
+    padding:14px 25px;
+
+    background:#1877f2;
+
+    color:#fff;
+
+    text-decoration:none;
+
+    border-radius:12px;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    transition:.30s;
+
+}
+
+.facebook-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+
+}
+
+.facebook-btn i{
+
+    margin-left:8px;
+
+}
+
+.copyright{
+
+    margin-top:20px;
+
+    font-size:16px;
+
+    opacity:.85;
+
+}
+
+/*=========================================
+        Responsive
+=========================================*/
+
+@media (max-width:768px){
+
+.container{
+
+    width:98%;
+
+    padding:10px;
+
+}
+
+.logo{
+
+    width:90px;
+
+}
+
+.main-title{
+
+    font-size:26px;
+
+}
+
+.sub-title{
+
+    font-size:17px;
+
+}
+
+.result-title{
+
+    font-size:23px;
+
+}
+
+.result-row{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:8px;
+
+    font-size:17px;
+
+}
+
+.result-value{
+
+    width:100%;
+
+    text-align:right;
+
+}
+
+.search-box{
+
+    padding:18px;
+
+}
+
+.search-box input{
+
+    font-size:18px;
+
+    height:52px;
+
+}
+
+.search-btn{
+
+    font-size:20px;
+
+    height:54px;
+
+}
+
+.attendance-btn{
+
+    font-size:18px;
+
+    height:54px;
+
+}
+
+.back-btn{
+
+    font-size:18px;
+
+    height:54px;
+
+}
+
+/* الجداول */
+
+.table-wrapper{
+
+    width:100%;
+
+    overflow-x:auto;
+
+    -webkit-overflow-scrolling:touch;
+
+}
+
+.attendance-table{
+
+    min-width:650px;
+
+    font-size:15px;
+
+}
+
+.attendance-table th{
+
+    padding:12px;
+
+    font-size:15px;
+
+}
+
+.attendance-table td{
+
+    padding:12px 8px;
+
+    font-size:15px;
+
+}
+
+/* بطاقات المدفوعات */
+
+.payment-summary{
+
+    grid-template-columns:1fr;
+
+}
+
+.pay-box strong{
+
+    font-size:24px;
+
+}
+
+.footer h3{
+
+    font-size:22px;
+
+}
+
+.footer p{
+
+    font-size:16px;
+
+}
+
+.facebook-btn{
+
+    width:100%;
+
+    font-size:18px;
+
+}
+
 }
