@@ -862,3 +862,56 @@ body{
 }
 
 }
+/*=========================================
+        Mobile Cards
+=========================================*/
+
+.mobile-card{
+    display:none;
+}
+
+@media (max-width:768px){
+
+.table-wrapper{
+    display:none;
+}
+
+.mobile-card{
+    display:block;
+}
+
+.data-card{
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    padding:18px;
+
+    margin-bottom:18px;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.10);
+
+    border-right:5px solid #0d47a1;
+
+}
+
+.data-card div{
+
+    margin:10px 0;
+
+    font-size:17px;
+
+    line-height:1.8;
+
+}
+
+.data-card span{
+
+    color:#0d47a1;
+
+    font-weight:bold;
+
+}
+
+}

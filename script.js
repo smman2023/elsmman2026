@@ -200,7 +200,7 @@ backBtn.addEventListener("click", function(){
     examCard.classList.add("hidden");
     paymentCard.classList.add("hidden");
 
-noticeBtn.classList.add("hidden");
+noticeBtn.classList.remove("hidden");
     result.classList.remove("hidden");
 
 });
@@ -211,7 +211,7 @@ backHomeworkBtn.addEventListener("click", function(){
     homeworkCard.classList.add("hidden");
     examCard.classList.add("hidden");
     paymentCard.classList.add("hidden");
-noticeBtn.classList.add("hidden");
+noticeBtn.classList.remove("hidden");
     result.classList.remove("hidden");
 
 });
@@ -222,7 +222,7 @@ backExamBtn.addEventListener("click", function(){
     homeworkCard.classList.add("hidden");
     examCard.classList.add("hidden");
     paymentCard.classList.add("hidden");
-noticeBtn.classList.add("hidden");
+noticeBtn.classList.remove("hidden");
     result.classList.remove("hidden");
 
 });
@@ -484,36 +484,72 @@ async function showAttendance() {
         }
 
         let html = `
-        <div class="table-wrapper">
-        <table class="attendance-table">
 
-        <tr>
-            <th>الحصة</th>
+<div class="table-wrapper">
 
-                <th>التاريخ</th>
+<table class="attendance-table">
 
-                <th>الحالة</th>
-        </tr>
-        `;
+<tr>
 
-        data.forEach(item => {
+<th>الحصة</th>
 
-            html += `
-            <tr>
-                <td>${item.lesson}</td>
+<th>التاريخ</th>
 
-                <td>${item.date}</td>
+<th>الحالة</th>
 
-                <td>${item.status}</td>
+</tr>
 
-            </tr>
-            `;
+`;
 
-        });
+data.forEach(item=>{
 
-        html += "</table></div>";
+html+=`
 
-        attendanceContent.innerHTML = html;
+<tr>
+
+<td>${item.lesson}</td>
+
+<td>${item.date}</td>
+
+<td>${item.status}</td>
+
+</tr>
+
+`;
+
+});
+
+html+=`
+
+</table>
+
+</div>
+
+<div class="mobile-card">
+
+`;
+
+data.forEach(item=>{
+
+html+=`
+
+<div class="data-card">
+
+<div><span>📘 الحصة :</span> ${item.lesson}</div>
+
+<div><span>📅 التاريخ :</span> ${item.date}</div>
+
+<div><span>✅ الحالة :</span> ${item.status}</div>
+
+</div>
+
+`;
+
+});
+
+html+=`</div>`;
+
+attendanceContent.innerHTML=html;
 
     } catch (e) {
 
