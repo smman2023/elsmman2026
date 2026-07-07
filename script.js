@@ -372,19 +372,19 @@ function searchStudent(){
 // عرض المدفوعات
 //=========================================
 
-async function showPayments(){
+async function showPayments() {
 
     result.classList.add("hidden");
 
     attendanceCard.classList.add("hidden");
     homeworkCard.classList.add("hidden");
     examCard.classList.add("hidden");
-
     paymentCard.classList.remove("hidden");
+    noticeCard.classList.add("hidden");
 
     paymentContent.innerHTML = "جارى تحميل بيانات المدفوعات...";
 
-    try{
+    try {
 
         const response = await fetch(
             PAYMENT_API + "?code=" + currentStudent.code
@@ -392,68 +392,129 @@ async function showPayments(){
 
         const data = await response.json();
 
-        if(data.length === 0){
+        if (data.length === 0) {
 
             paymentContent.innerHTML =
-            "<h3>لا توجد بيانات مالية لهذا الطالب</h3>";
+                "<h3>لا توجد بيانات مالية لهذا الطالب</h3>";
 
             return;
 
         }
 
-        // آخر سجل هو أحدث شهر
-        const last = data[data.length-1];
+        // ==========================
+        // عرض الهاتف (بطاقات)
+        // ==========================
 
-        let html = `
+        if (window.innerWidth <= 768) {
 
-<table class="attendance-table">
+            let html = "";
 
-<tr>
+            data.forEach(item => {
 
-<th>الشهر</th>
+                html += `
 
-<th>المدفوع</th>
+                <div class="attendance-mobile-card payment-card">
 
-<th>المتبقى</th>
+                    <div class="card-item">
 
-<th>إجمالى المستحق</th>
+                        <span>📅 الشهر</span>
 
-</tr>
+                        <strong>${item.month}</strong>
 
-`;
+                    </div>
 
-        data.forEach(item=>{
+                    <div class="card-item">
 
-            html += `
+                        <span>💵 المدفوع</span>
 
-<tr>
+                        <strong>${item.paid}</strong>
 
-<td>${item.month}</td>
+                    </div>
 
-<td>${item.paid}</td>
+                    <div class="card-item">
 
-<td>${item.remaining}</td>
+                        <span>❗ المتبقى</span>
 
-<td>${item.total}</td>
+                        <strong>${item.remaining}</strong>
 
-</tr>
+                    </div>
 
-`;
+                    <div class="card-item">
 
-        });
+                        <span>💰 إجمالى المستحق</span>
 
-        html += "</table>";
+                        <strong>${item.total}</strong>
 
-        paymentContent.innerHTML = html;
+                    </div>
+
+                </div>
+
+                `;
+
+            });
+
+            paymentContent.innerHTML = html;
+
+        }
+
+        // ==========================
+        // عرض الكمبيوتر (جدول)
+        // ==========================
+
+        else {
+
+            let html = `
+
+            <div class="table-wrapper">
+
+            <table class="attendance-table">
+
+            <tr>
+
+                <th>الشهر</th>
+
+                <th>المدفوع</th>
+
+                <th>المتبقى</th>
+
+                <th>إجمالى المستحق</th>
+
+            </tr>
+
+            `;
+
+            data.forEach(item => {
+
+                html += `
+
+                <tr>
+
+                    <td>${item.month}</td>
+
+                    <td>${item.paid}</td>
+
+                    <td>${item.remaining}</td>
+
+                    <td>${item.total}</td>
+
+                </tr>
+
+                `;
+
+            });
+
+            html += "</table></div>";
+
+            paymentContent.innerHTML = html;
+
+        }
 
     }
 
-    catch(error){
-
-        console.log(error);
+    catch (e) {
 
         paymentContent.innerHTML =
-        "<h3>حدث خطأ أثناء تحميل بيانات المدفوعات</h3>";
+            "<h3>حدث خطأ أثناء تحميل بيانات المدفوعات</h3>";
 
     }
 
@@ -601,9 +662,9 @@ async function showHomework() {
     homeworkCard.classList.remove("hidden");
     examCard.classList.add("hidden");
     paymentCard.classList.add("hidden");
+    noticeCard.classList.add("hidden");
 
-    homeworkContent.innerHTML =
-        "جارى تحميل درجات الواجب...";
+    homeworkContent.innerHTML = "جارى تحميل درجات الواجب...";
 
     try {
 
@@ -613,7 +674,7 @@ async function showHomework() {
 
         const data = await response.json();
 
-        if (data.length == 0) {
+        if (data.length === 0) {
 
             homeworkContent.innerHTML =
                 "<h3>لا توجد درجات واجب</h3>";
@@ -622,51 +683,124 @@ async function showHomework() {
 
         }
 
-        let html = `
-        <div class="table-wrapper">
-        <table class="attendance-table">
+        // ==========================
+        // عرض الهاتف (بطاقات)
+        // ==========================
 
-        <tr>
+        if (window.innerWidth <= 768) {
 
-            <th>الحصة</th>
+            let html = "";
 
-            <th>التاريخ</th>
+            data.forEach(item => {
 
-            <th>درجة الطالب</th>
+                html += `
 
-            <th>الدرجة النهائية</th>
+                <div class="attendance-mobile-card homework-card">
 
-        </tr>
-        `;
+                    <div class="card-item">
 
-        data.forEach(item => {
+                        <span>📚 الواجب</span>
 
-            html += `
+                        <strong>${item.homework}</strong>
+
+                    </div>
+
+                    <div class="card-item">
+
+                        <span>📅 التاريخ</span>
+
+                        <strong>${item.date}</strong>
+
+                    </div>
+
+                    <div class="card-item">
+
+                        <span>🎯 درجة الطالب</span>
+
+                        <strong>${item.grade}</strong>
+
+                    </div>
+
+                    <div class="card-item">
+
+                        <span>🏆 الدرجة النهائية</span>
+
+                        <strong>${item.total}</strong>
+
+                    </div>
+
+                </div>
+
+                `;
+
+            });
+
+            homeworkContent.innerHTML = html;
+
+        }
+
+        // ==========================
+        // عرض الكمبيوتر (جدول)
+        // ==========================
+
+        else {
+
+            let html = `
+
+            <div class="table-wrapper">
+
+            <table class="attendance-table">
+
             <tr>
 
-                <td>${item.homework}</td>
+                <th>الواجب</th>
 
-                <td>${item.date}</td>
+                <th>التاريخ</th>
 
-                <td>${item.grade}</td>
+                <th>درجة الطالب</th>
 
-                <td>${item.total}</td>
+                <th>الدرجة النهائية</th>
 
             </tr>
+
             `;
 
-        });
+            data.forEach(item => {
 
-        html += "</table></div>";
+                html += `
 
-        homeworkContent.innerHTML = html;
+                <tr>
 
-    } catch (e) {
+                    <td>${item.homework}</td>
+
+                    <td>${item.date}</td>
+
+                    <td>${item.grade}</td>
+
+                    <td>${item.total}</td>
+
+                </tr>
+
+                `;
+
+            });
+
+            html += "</table></div>";
+
+            homeworkContent.innerHTML = html;
+
+        }
+
+    }
+
+    catch (e) {
 
         homeworkContent.innerHTML =
             "<h3>حدث خطأ أثناء تحميل درجات الواجب</h3>";
 
     }
+
+}
 
 }
 async function showExam() {
@@ -677,9 +811,9 @@ async function showExam() {
     homeworkCard.classList.add("hidden");
     examCard.classList.remove("hidden");
     paymentCard.classList.add("hidden");
+    noticeCard.classList.add("hidden");
 
-    examContent.innerHTML =
-        "جارى تحميل درجات الامتحانات...";
+    examContent.innerHTML = "جارى تحميل درجات الامتحانات...";
 
     try {
 
@@ -689,7 +823,7 @@ async function showExam() {
 
         const data = await response.json();
 
-        if (data.length == 0) {
+        if (data.length === 0) {
 
             examContent.innerHTML =
                 "<h3>لا توجد درجات امتحانات</h3>";
@@ -698,46 +832,117 @@ async function showExam() {
 
         }
 
-        let html = `
-        <div class="table-wrapper">
-        <table class="attendance-table">
+        // ==========================
+        // عرض الهاتف (بطاقات)
+        // ==========================
 
-        <tr>
+        if (window.innerWidth <= 768) {
 
-            <th>الامتحان</th>
+            let html = "";
 
-            <th>التاريخ</th>
+            data.forEach(item => {
 
-            <th>درجة الطالب</th>
+                html += `
 
-            <th>الدرجة النهائية</th>
+                <div class="attendance-mobile-card exam-card">
 
-        </tr>
-        `;
+                    <div class="card-item">
 
-        data.forEach(item => {
+                        <span>📝 الامتحان</span>
 
-            html += `
+                        <strong>${item.exam}</strong>
+
+                    </div>
+
+                    <div class="card-item">
+
+                        <span>📅 التاريخ</span>
+
+                        <strong>${item.date}</strong>
+
+                    </div>
+
+                    <div class="card-item">
+
+                        <span>🎯 درجة الطالب</span>
+
+                        <strong>${item.grade}</strong>
+
+                    </div>
+
+                    <div class="card-item">
+
+                        <span>🏆 الدرجة النهائية</span>
+
+                        <strong>${item.total}</strong>
+
+                    </div>
+
+                </div>
+
+                `;
+
+            });
+
+            examContent.innerHTML = html;
+
+        }
+
+        // ==========================
+        // عرض الكمبيوتر (جدول)
+        // ==========================
+
+        else {
+
+            let html = `
+
+            <div class="table-wrapper">
+
+            <table class="attendance-table">
+
             <tr>
 
-                <td>${item.exam}</td>
+                <th>الامتحان</th>
 
-                <td>${item.date}</td>
+                <th>التاريخ</th>
 
-                <td>${item.grade}</td>
+                <th>درجة الطالب</th>
 
-                <td>${item.total}</td>
+                <th>الدرجة النهائية</th>
 
             </tr>
+
             `;
 
-        });
+            data.forEach(item => {
 
-        html += "</table></div>";
+                html += `
 
-        examContent.innerHTML = html;
+                <tr>
 
-    } catch (e) {
+                    <td>${item.exam}</td>
+
+                    <td>${item.date}</td>
+
+                    <td>${item.grade}</td>
+
+                    <td>${item.total}</td>
+
+                </tr>
+
+                `;
+
+            });
+
+            html += "</table></div>";
+
+            examContent.innerHTML = html;
+
+        }
+
+    }
+
+    catch (e) {
 
         examContent.innerHTML =
             "<h3>حدث خطأ أثناء تحميل درجات الامتحانات</h3>";
@@ -745,89 +950,143 @@ async function showExam() {
     }
 
 }
-async function showNotices(){
+async function showNotices() {
 
     result.classList.add("hidden");
 
     attendanceCard.classList.add("hidden");
-
     homeworkCard.classList.add("hidden");
-
     examCard.classList.add("hidden");
-
     paymentCard.classList.add("hidden");
-
     noticeCard.classList.remove("hidden");
 
-    noticeContent.innerHTML="جارى تحميل التنبيهات...";
+    noticeContent.innerHTML = "جارى تحميل التنبيهات...";
 
-    try{
+    try {
 
         const response = await fetch(
-
             NOTICE_API + "?code=" + currentStudent.code
-
         );
 
         const data = await response.json();
 
-        if(data.length==0){
+        if (data.length === 0) {
 
-            noticeContent.innerHTML=
-
-            "<h3>لا توجد تنبيهات لهذا الطالب</h3>";
+            noticeContent.innerHTML =
+                "<h3>لا توجد تنبيهات لهذا الطالب</h3>";
 
             return;
 
         }
 
-        let html=`
+        // ==========================
+        // عرض الهاتف (بطاقات)
+        // ==========================
 
-<div class="table-wrapper">
+        if (window.innerWidth <= 768) {
 
-<table class="attendance-table">
+            let html = "";
 
-<tr>
+            data.forEach(item => {
 
-<th>الحصة</th>
+                html += `
 
-<th>التاريخ</th>
+                <div class="attendance-mobile-card notice-card">
 
-<th>التنبيه أو الملاحظة</th>
+                    <div class="card-item">
 
-</tr>
+                        <span>📘 الحصة</span>
 
-`;
+                        <strong>${item.lesson}</strong>
 
-        data.forEach(item=>{
+                    </div>
 
-            html+=`
+                    <div class="card-item">
 
-<tr>
+                        <span>📅 التاريخ</span>
 
-<td>${item.lesson}</td>
+                        <strong>${item.date}</strong>
 
-<td>${item.date}</td>
+                    </div>
 
-<td>${item.notice}</td>
+                    <div style="margin-top:15px;line-height:2">
 
-</tr>
+                        <span style="color:#d32f2f;font-weight:bold">
 
-`;
+                            🔔 التنبيه
 
-        });
+                        </span>
 
-        html+="</table></div>";
+                        <br><br>
 
-        noticeContent.innerHTML=html;
+                        ${item.notice}
+
+                    </div>
+
+                </div>
+
+                `;
+
+            });
+
+            noticeContent.innerHTML = html;
+
+        }
+
+        // ==========================
+        // عرض الكمبيوتر (جدول)
+        // ==========================
+
+        else {
+
+            let html = `
+
+            <div class="table-wrapper">
+
+            <table class="attendance-table">
+
+            <tr>
+
+                <th>الحصة</th>
+
+                <th>التاريخ</th>
+
+                <th>التنبيه أو الملاحظة</th>
+
+            </tr>
+
+            `;
+
+            data.forEach(item => {
+
+                html += `
+
+                <tr>
+
+                    <td>${item.lesson}</td>
+
+                    <td>${item.date}</td>
+
+                    <td>${item.notice}</td>
+
+                </tr>
+
+                `;
+
+            });
+
+            html += "</table></div>";
+
+            noticeContent.innerHTML = html;
+
+        }
 
     }
 
-    catch(e){
+    catch (e) {
 
-        noticeContent.innerHTML=
-
-        "<h3>حدث خطأ أثناء تحميل التنبيهات</h3>";
+        noticeContent.innerHTML =
+            "<h3>حدث خطأ أثناء تحميل التنبيهات</h3>";
 
     }
 
