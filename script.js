@@ -121,9 +121,9 @@ document.getElementById("backNoticeBtn");
 // تحميل بيانات الطلاب
 //=========================================
 
-async function loadStudents() {
+async function loadStudents(){
 
-    try {
+    try{
 
         searchBtn.disabled = true;
         searchBtn.innerHTML = "جارى تحميل البيانات...";
@@ -132,25 +132,24 @@ async function loadStudents() {
 
         students = await response.json();
 
-        console.log("Students Loaded:", students.length);
+        console.log("Students :", students.length);
 
         searchBtn.disabled = false;
         searchBtn.innerHTML = "استعلام";
 
     }
 
-    catch (error) {
+    catch(error){
 
         console.error(error);
 
         alert("تعذر تحميل بيانات الطلاب");
 
-        searchBtn.disabled = false;
-        searchBtn.innerHTML = "استعلام";
-
     }
 
 }
+
+loadStudents();
 
 //=========================================
 // Events
@@ -762,8 +761,4 @@ async function showNotices(){
 
     }
 
-
-// تحميل بيانات الطلاب عند فتح الصفحة
-loadStudents();
-}
 }
