@@ -466,6 +466,7 @@ async function showAttendance() {
     homeworkCard.classList.add("hidden");
     examCard.classList.add("hidden");
     paymentCard.classList.add("hidden");
+    noticeCard.classList.add("hidden");
 
     attendanceContent.innerHTML = "جارى تحميل سجل الحضور...";
 
@@ -478,80 +479,113 @@ async function showAttendance() {
         const data = await response.json();
 
         if (data.length === 0) {
+
             attendanceContent.innerHTML =
                 "<h3>لا يوجد سجل حضور</h3>";
+
             return;
+
         }
 
-        let html = `
+        // ==========================
+        // عرض الهاتف (بطاقات)
+        // ==========================
 
-<div class="table-wrapper">
+        if (window.innerWidth <= 768) {
 
-<table class="attendance-table">
+            let html = "";
 
-<tr>
+            data.forEach(item => {
 
-<th>الحصة</th>
+                html += `
 
-<th>التاريخ</th>
+                <div class="attendance-mobile-card">
 
-<th>الحالة</th>
+                    <div class="card-item">
 
-</tr>
+                        <span>📘 الحصة</span>
 
-`;
+                        <strong>${item.lesson}</strong>
 
-data.forEach(item=>{
+                    </div>
 
-html+=`
+                    <div class="card-item">
 
-<tr>
+                        <span>📅 التاريخ</span>
 
-<td>${item.lesson}</td>
+                        <strong>${item.date}</strong>
 
-<td>${item.date}</td>
+                    </div>
 
-<td>${item.status}</td>
+                    <div class="card-item">
 
-</tr>
+                        <span>✅ الحالة</span>
 
-`;
+                        <strong>${item.status}</strong>
 
-});
+                    </div>
 
-html+=`
+                </div>
 
-</table>
+                `;
 
-</div>
+            });
 
-<div class="mobile-card">
+            attendanceContent.innerHTML = html;
 
-`;
+        }
 
-data.forEach(item=>{
+        // ==========================
+        // عرض الكمبيوتر (جدول)
+        // ==========================
 
-html+=`
+        else {
 
-<div class="data-card">
+            let html = `
 
-<div><span>📘 الحصة :</span> ${item.lesson}</div>
+            <div class="table-wrapper">
 
-<div><span>📅 التاريخ :</span> ${item.date}</div>
+            <table class="attendance-table">
 
-<div><span>✅ الحالة :</span> ${item.status}</div>
+            <tr>
 
-</div>
+                <th>الحصة</th>
 
-`;
+                <th>التاريخ</th>
 
-});
+                <th>الحالة</th>
 
-html+=`</div>`;
+            </tr>
 
-attendanceContent.innerHTML=html;
+            `;
 
-    } catch (e) {
+            data.forEach(item => {
+
+                html += `
+
+                <tr>
+
+                    <td>${item.lesson}</td>
+
+                    <td>${item.date}</td>
+
+                    <td>${item.status}</td>
+
+                </tr>
+
+                `;
+
+            });
+
+            html += "</table></div>";
+
+            attendanceContent.innerHTML = html;
+
+        }
+
+    }
+
+    catch (e) {
 
         attendanceContent.innerHTML =
             "<h3>حدث خطأ أثناء تحميل سجل الحضور</h3>";

@@ -862,25 +862,11 @@ body{
 }
 
 }
-/*=========================================
-        Mobile Cards
-=========================================*/
+/*==============================
+بطاقات الهاتف
+==============================*/
 
-.mobile-card{
-    display:none;
-}
-
-@media (max-width:768px){
-
-.table-wrapper{
-    display:none;
-}
-
-.mobile-card{
-    display:block;
-}
-
-.data-card{
+.attendance-mobile-card{
 
     background:#ffffff;
 
@@ -890,22 +876,49 @@ body{
 
     margin-bottom:18px;
 
-    box-shadow:0 6px 18px rgba(0,0,0,.10);
+    box-shadow:0 6px 18px rgba(0,0,0,.12);
 
-    border-right:5px solid #0d47a1;
+    border-right:6px solid #0d47a1;
 
 }
 
-.data-card div{
+.card-item{
 
-    margin:10px 0;
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #ececec;
+
+}
+
+.card-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.card-item span{
+
+    color:#0d47a1;
+
+    font-weight:700;
 
     font-size:17px;
 
-    line-height:1.8;
-
 }
 
+.card-item strong{
+
+    color:#222;
+
+    font-size:17px;
+
+}
 .data-card span{
 
     color:#0d47a1;
