@@ -802,7 +802,6 @@ async function showHomework() {
 
 }
 
-}
 async function showExam() {
 
     result.classList.add("hidden");
