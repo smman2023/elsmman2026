@@ -46,16 +46,20 @@ const backNoticeBtn = document.getElementById("backNoticeBtn");
 
 async function loadStudents(){
     try {
-        searchBtn.disabled = true;
-        searchBtn.innerHTML = "جارى تحميل البيانات...";
+        if(searchBtn) {
+            searchBtn.disabled = true;
+            searchBtn.innerHTML = "جارى تحميل البيانات...";
+        }
 
         const response = await fetch(API_URL, { method: "GET", redirect: "follow" });
         students = await response.json();
 
         console.log("Students loaded successfully:", students.length);
 
-        searchBtn.disabled = false;
-        searchBtn.innerHTML = "استعلام";
+        if(searchBtn) {
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = "استعلام";
+        }
 
         const savedCode = localStorage.getItem("studentCode");
         const savedPhone = localStorage.getItem("studentPhone");
@@ -68,46 +72,48 @@ async function loadStudents(){
     }
     catch(error){
         console.error("Error loading students:", error);
-        searchBtn.disabled = false;
-        searchBtn.innerHTML = "استعلام";
+        if(searchBtn) {
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = "استعلام";
+        }
     }
 }
 
 loadStudents();
 
-searchBtn.addEventListener("click", searchStudent);
+if(searchBtn) searchBtn.addEventListener("click", searchStudent);
 
-codeInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
-passwordInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
+if(codeInput) codeInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
+if(passwordInput) passwordInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
 
-attendanceBtn.addEventListener("click", showAttendance);
-homeworkBtn.addEventListener("click", showHomework);
-examBtn.addEventListener("click", showExam);
-paymentBtn.addEventListener("click", showPayments);
-noticeBtn.addEventListener("click", showNotices);
+if(attendanceBtn) attendanceBtn.addEventListener("click", showAttendance);
+if(homeworkBtn) homeworkBtn.addEventListener("click", showHomework);
+if(examBtn) examBtn.addEventListener("click", showExam);
+if(paymentBtn) paymentBtn.addEventListener("click", showPayments);
+if(noticeBtn) noticeBtn.addEventListener("click", showNotices);
 
 function goBackToResult() {
-    attendanceCard.classList.add("hidden");
-    homeworkCard.classList.add("hidden");
-    examCard.classList.add("hidden");
-    paymentCard.classList.add("hidden");
-    noticeCard.classList.add("hidden");
-    result.classList.remove("hidden");
+    if(attendanceCard) attendanceCard.classList.add("hidden");
+    if(homeworkCard) homeworkCard.classList.add("hidden");
+    if(examCard) examCard.classList.add("hidden");
+    if(paymentCard) paymentCard.classList.add("hidden");
+    if(noticeCard) noticeCard.classList.add("hidden");
+    if(result) result.classList.remove("hidden");
 }
 
-backBtn.addEventListener("click", goBackToResult);
-backHomeworkBtn.addEventListener("click", goBackToResult);
-backExamBtn.addEventListener("click", goBackToResult);
-backPaymentBtn.addEventListener("click", goBackToResult);
-backNoticeBtn.addEventListener("click", goBackToResult);
+if(backBtn) backBtn.addEventListener("click", goBackToResult);
+if(backHomeworkBtn) backHomeworkBtn.addEventListener("click", goBackToResult);
+if(backExamBtn) backExamBtn.addEventListener("click", goBackToResult);
+if(backPaymentBtn) backPaymentBtn.addEventListener("click", goBackToResult);
+if(backNoticeBtn) backNoticeBtn.addEventListener("click", goBackToResult);
 
 if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
         localStorage.removeItem("studentCode");
         localStorage.removeItem("studentPhone");
-        codeInput.value = "";
-        passwordInput.value = "";
-        result.classList.add("hidden");
+        if(codeInput) codeInput.value = "";
+        if(passwordInput) passwordInput.value = "";
+        if(result) result.classList.add("hidden");
         alert("تم تسجيل الخروج بنجاح");
     });
 }
@@ -115,31 +121,27 @@ if (logoutBtn) {
 function displayStudent(student){
     currentStudent = student;
 
-    // إظهار بطاقة البيانات وإخفاء الخطأ
-    result.classList.remove("hidden");
-    notFound.classList.add("hidden");
+    if(result) result.classList.remove("hidden");
+    if(notFound) notFound.classList.add("hidden");
 
-    // إخفاء باقي الكروت
-    attendanceCard.classList.add("hidden");
-    homeworkCard.classList.add("hidden");
-    examCard.classList.add("hidden");
-    paymentCard.classList.add("hidden");
-    noticeCard.classList.add("hidden");
+    if(attendanceCard) attendanceCard.classList.add("hidden");
+    if(homeworkCard) homeworkCard.classList.add("hidden");
+    if(examCard) examCard.classList.add("hidden");
+    if(paymentCard) paymentCard.classList.add("hidden");
+    if(noticeCard) noticeCard.classList.add("hidden");
 
-    // إظهار الأزرار
-    attendanceBtn.classList.remove("hidden");
-    homeworkBtn.classList.remove("hidden");
-    examBtn.classList.remove("hidden");
-    paymentBtn.classList.remove("hidden");
-    noticeBtn.classList.remove("hidden");
+    if(attendanceBtn) attendanceBtn.classList.remove("hidden");
+    if(homeworkBtn) homeworkBtn.classList.remove("hidden");
+    if(examBtn) examBtn.classList.remove("hidden");
+    if(paymentBtn) paymentBtn.classList.remove("hidden");
+    if(noticeBtn) noticeBtn.classList.remove("hidden");
 
-    // تعبئة البيانات والتأكد من عدم ظهور قيم فارغة
-    document.getElementById("studentCode").textContent = student.code || "-";
-    document.getElementById("studentName").textContent = student.name || "-";
-    document.getElementById("studentGrade").textContent = student.grade || "-";
-    document.getElementById("studentGroup").textContent = student.group || "-";
-    document.getElementById("studentWhatsapp").textContent = student.studentWhatsapp || "-";
-    document.getElementById("parentWhatsapp").textContent = student.parentWhatsapp || "-";
+    if(document.getElementById("studentCode")) document.getElementById("studentCode").textContent = student.code || "-";
+    if(document.getElementById("studentName")) document.getElementById("studentName").textContent = student.name || "-";
+    if(document.getElementById("studentGrade")) document.getElementById("studentGrade").textContent = student.grade || "-";
+    if(document.getElementById("studentGroup")) document.getElementById("studentGroup").textContent = student.group || "-";
+    if(document.getElementById("studentWhatsapp")) document.getElementById("studentWhatsapp").textContent = student.studentWhatsapp || "-";
+    if(document.getElementById("parentWhatsapp")) document.getElementById("parentWhatsapp").textContent = student.parentWhatsapp || "-";
 }
 
 function searchStudent(){
@@ -151,8 +153,8 @@ function searchStudent(){
             .replace(/\D/g, "");
     }
 
-    const rawCode = codeInput.value.trim();
-    const rawPhone = passwordInput.value.trim();
+    const rawCode = codeInput ? codeInput.value.trim() : "";
+    const rawPhone = passwordInput ? passwordInput.value.trim() : "";
 
     const code = normalize(rawCode);
     const phoneInput = normalize(rawPhone);
@@ -162,8 +164,8 @@ function searchStudent(){
         return;
     }
 
-    result.classList.add("hidden");
-    notFound.classList.add("hidden");
+    if(result) result.classList.add("hidden");
+    if(notFound) notFound.classList.add("hidden");
 
     const student = students.find(item => {
         const itemCode = normalize(item.code);
@@ -174,8 +176,10 @@ function searchStudent(){
     });
 
     if(!student){
-        notFound.innerHTML = `<i class="fa-solid fa-circle-xmark"></i><br><br><strong>كود الطالب أو رقم الواتساب غير صحيح</strong>`;
-        notFound.classList.remove("hidden");
+        if(notFound) {
+            notFound.innerHTML = `<i class="fa-solid fa-circle-xmark"></i><br><br><strong>كود الطالب أو رقم الواتساب غير صحيح</strong>`;
+            notFound.classList.remove("hidden");
+        }
         return;
     }
 
@@ -191,22 +195,22 @@ function searchStudent(){
 }
 
 async function fetchAndRender(apiUrl, cardElement, contentElement, mappingFn) {
-    result.classList.add("hidden");
-    attendanceCard.classList.add("hidden");
-    homeworkCard.classList.add("hidden");
-    examCard.classList.add("hidden");
-    paymentCard.classList.add("hidden");
-    noticeCard.classList.add("hidden");
+    if(result) result.classList.add("hidden");
+    if(attendanceCard) attendanceCard.classList.add("hidden");
+    if(homeworkCard) homeworkCard.classList.add("hidden");
+    if(examCard) examCard.classList.add("hidden");
+    if(paymentCard) paymentCard.classList.add("hidden");
+    if(noticeCard) noticeCard.classList.add("hidden");
 
-    cardElement.classList.remove("hidden");
-    contentElement.innerHTML = "جارى التحميل...";
+    if(cardElement) cardElement.classList.remove("hidden");
+    if(contentElement) contentElement.innerHTML = "جارى التحميل...";
 
     try {
         const response = await fetch(apiUrl + "?code=" + currentStudent.code);
         const data = await response.json();
 
         if (!data || data.length === 0) {
-            contentElement.innerHTML = "<h3>لا توجد بيانات متاحة</h3>";
+            if(contentElement) contentElement.innerHTML = "<h3>لا توجد بيانات متاحة</h3>";
             return;
         }
 
@@ -216,9 +220,9 @@ async function fetchAndRender(apiUrl, cardElement, contentElement, mappingFn) {
         } else {
             html = mappingFn(data, false);
         }
-        contentElement.innerHTML = html;
+        if(contentElement) contentElement.innerHTML = html;
     } catch (e) {
-        contentElement.innerHTML = "<h3>حدث خطأ أثناء تحميل البيانات</h3>";
+        if(contentElement) contentElement.innerHTML = "<h3>حدث خطأ أثناء تحميل البيانات</h3>";
     }
 }
 
