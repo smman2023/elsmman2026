@@ -12,7 +12,6 @@ const NOTICE_API = "https://script.google.com/macros/s/AKfycbyQ3ckcK_6nwcCs_Gm9y
 let students = [];
 let currentStudent = null;
 
-// ذاكرة مؤقتة لتخزين البيانات محلياً لمنع التكرار وجعل التصفح فورياً
 let cacheData = {
     attendance: null,
     homework: null,
@@ -57,7 +56,7 @@ async function loadStudents(){
     try {
         if(searchBtn) {
             searchBtn.disabled = true;
-            searchBtn.innerHTML = "جارى تحميل البيانات...";
+            searchBtn.innerHTML = "جاري تحميل البيانات...";
         }
 
         const response = await fetch(API_URL, { method: "GET", redirect: "follow" });
@@ -150,7 +149,6 @@ function displayStudent(student){
     if(document.getElementById("studentWhatsapp")) document.getElementById("studentWhatsapp").textContent = student.studentWhatsapp || "-";
     if(document.getElementById("parentWhatsapp")) document.getElementById("parentWhatsapp").textContent = student.parentWhatsapp || "-";
 
-    // جلب البيانات مسبقاً في الخلفية (Preloading) لكي تكون جاهزة وفورية عند الضغط
     preloadAllData(student.code);
 }
 
@@ -204,7 +202,6 @@ function searchStudent(){
     displayStudent(student);
 }
 
-// دالة لجلب كل البيانات دفعة واحدة في الخلفية فور تسجيل الدخول
 async function preloadAllData(code) {
     cacheData = { attendance: null, homework: null, exam: null, payment: null, notice: null };
     
@@ -223,7 +220,19 @@ async function preloadAllData(code) {
     });
 }
 
-// دالة ذكية وسريعة للغاية للعرض الفوري من الذاكرة المؤقتة
+// تصميم شريط التحميل ونسبة التقدم
+function getLoadingHTML() {
+    return `
+        <div style="text-align:center; padding: 30px 20px;">
+            <p style="font-size: 20px; font-weight: bold; color: #0d47a1; margin-bottom: 15px;">جاري التحميل...</p>
+            <div style="width: 100%; background: #e0e0e0; border-radius: 15px; overflow: hidden; height: 22px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);">
+                <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(135deg, #0d47a1, #1976d2); border-radius: 15px; transition: width 0.4s ease-in-out;"></div>
+            </div>
+            <p id="progressText" style="font-size: 16px; font-weight: bold; color: #555; margin-top: 10px;">0%</p>
+        </div>
+    `;
+}
+
 async function renderFast(apiUrl, cardElement, contentElement, mappingFn, cacheKey) {
     if(result) result.classList.add("hidden");
     attendanceCard.classList.add("hidden");
@@ -234,19 +243,41 @@ async function renderFast(apiUrl, cardElement, contentElement, mappingFn, cacheK
 
     cardElement.classList.remove("hidden");
 
-    // إذا كانت البيانات محملة مسبقاً، اعرضها في الفترات الزمنية (0 ثانية)
     if (cacheData[cacheKey] !== null) {
         processRender(cacheData[cacheKey], contentElement, mappingFn);
         return;
     }
 
-    contentElement.innerHTML = "جارى التحميل الفورى...";
+    contentElement.innerHTML = getLoadingHTML();
+    
+    // محاكاة تصاعد شريط التحميل بنسبة مئوية بشكل سلس
+    let progress = 10;
+    const bar = document.getElementById("progressBar");
+    const text = document.getElementById("progressText");
+    
+    const interval = setInterval(() => {
+        if (progress < 85) {
+            progress += Math.floor(Math.random() * 15) + 5;
+            if(bar) bar.style.width = progress + "%";
+            if(text) text.textContent = progress + "%";
+        }
+    }, 150);
+
     try {
         const response = await fetch(apiUrl + "?code=" + currentStudent.code);
         const data = await response.json();
-        cacheData[cacheKey] = data; // تخزينها للمرة القادمة
-        processRender(data, contentElement, mappingFn);
+        cacheData[cacheKey] = data;
+        
+        clearInterval(interval);
+        if(bar) bar.style.width = "100%";
+        if(text) text.textContent = "100%";
+        
+        setTimeout(() => {
+            processRender(data, contentElement, mappingFn);
+        }, 300);
+
     } catch (e) {
+        clearInterval(interval);
         contentElement.innerHTML = "<h3>حدث خطأ أثناء تحميل البيانات</h3>";
     }
 }
