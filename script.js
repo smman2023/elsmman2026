@@ -7,10 +7,19 @@ const ATTENDANCE_API = "https://script.google.com/macros/s/AKfycbzd0as48EDKd4k9y
 const HOMEWORK_API = "https://script.google.com/macros/s/AKfycbyGgMFmNMPR6OAWNBemEoTF_jFs1u2AXaWJXFOeA6iVuOlgeJau1DuAutH89h9oP_hC-g/exec";
 const EXAM_API = "https://script.google.com/macros/s/AKfycbyrSNWCMtLaFZepp3OlxuLip2Pe02X2bndnkbqJE_2DszwwPPKsSnP1wsSlv7pqjvi8fA/exec";
 const PAYMENT_API = "https://script.google.com/macros/s/AKfycbwBxrvavrzIp_9tKKIk63OUYLhk30WkT_zU3JWFk7Km11Dmh8gB_ycqgoND_4Z-JwdX/exec";
-const NOTICE_API = "https://script.google.com/macros/s/AKfycbxCI7RygW26vR5lLu8k0DwfeKEhR00wOsGvF-qVJGhvMA8dsck-MqZNwXH0AT2qYkvY/exec";
+const NOTICE_API = "https://script.google.com/macros/s/AKfycbyQ3ckcK_6nwcCs_Gm9yPJ6MMiRHVMoI0KYyli79w3W0cpteMQRJKuznmNWAAlxLv1D/exec";
 
 let students = [];
 let currentStudent = null;
+
+// ذاكرة مؤقتة لتخزين البيانات محلياً لمنع التكرار وجعل التصفح فورياً
+let cacheData = {
+    attendance: null,
+    homework: null,
+    exam: null,
+    payment: null,
+    notice: null
+};
 
 const codeInput = document.getElementById("codeInput");
 const passwordInput = document.getElementById("passwordInput");
@@ -54,8 +63,6 @@ async function loadStudents(){
         const response = await fetch(API_URL, { method: "GET", redirect: "follow" });
         students = await response.json();
 
-        console.log("Students loaded successfully:", students.length);
-
         if(searchBtn) {
             searchBtn.disabled = false;
             searchBtn.innerHTML = "استعلام";
@@ -82,7 +89,6 @@ async function loadStudents(){
 loadStudents();
 
 if(searchBtn) searchBtn.addEventListener("click", searchStudent);
-
 if(codeInput) codeInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
 if(passwordInput) passwordInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
 
@@ -111,6 +117,7 @@ if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
         localStorage.removeItem("studentCode");
         localStorage.removeItem("studentPhone");
+        cacheData = { attendance: null, homework: null, exam: null, payment: null, notice: null };
         if(codeInput) codeInput.value = "";
         if(passwordInput) passwordInput.value = "";
         if(result) result.classList.add("hidden");
@@ -142,6 +149,9 @@ function displayStudent(student){
     if(document.getElementById("studentGroup")) document.getElementById("studentGroup").textContent = student.group || "-";
     if(document.getElementById("studentWhatsapp")) document.getElementById("studentWhatsapp").textContent = student.studentWhatsapp || "-";
     if(document.getElementById("parentWhatsapp")) document.getElementById("parentWhatsapp").textContent = student.parentWhatsapp || "-";
+
+    // جلب البيانات مسبقاً في الخلفية (Preloading) لكي تكون جاهزة وفورية عند الضغط
+    preloadAllData(student.code);
 }
 
 function searchStudent(){
@@ -194,40 +204,69 @@ function searchStudent(){
     displayStudent(student);
 }
 
-async function fetchAndRender(apiUrl, cardElement, contentElement, mappingFn) {
+// دالة لجلب كل البيانات دفعة واحدة في الخلفية فور تسجيل الدخول
+async function preloadAllData(code) {
+    cacheData = { attendance: null, homework: null, exam: null, payment: null, notice: null };
+    
+    Promise.all([
+        fetch(ATTENDANCE_API + "?code=" + code).then(res => res.json()).catch(() => []),
+        fetch(HOMEWORK_API + "?code=" + code).then(res => res.json()).catch(() => []),
+        fetch(EXAM_API + "?code=" + code).then(res => res.json()).catch(() => []),
+        fetch(PAYMENT_API + "?code=" + code).then(res => res.json()).catch(() => []),
+        fetch(NOTICE_API + "?code=" + code).then(res => res.json()).catch(() => [])
+    ]).then(results => {
+        cacheData.attendance = results[0];
+        cacheData.homework = results[1];
+        cacheData.exam = results[2];
+        cacheData.payment = results[3];
+        cacheData.notice = results[4];
+    });
+}
+
+// دالة ذكية وسريعة للغاية للعرض الفوري من الذاكرة المؤقتة
+async function renderFast(apiUrl, cardElement, contentElement, mappingFn, cacheKey) {
     if(result) result.classList.add("hidden");
-    if(attendanceCard) attendanceCard.classList.add("hidden");
-    if(homeworkCard) homeworkCard.classList.add("hidden");
-    if(examCard) examCard.classList.add("hidden");
-    if(paymentCard) paymentCard.classList.add("hidden");
-    if(noticeCard) noticeCard.classList.add("hidden");
+    attendanceCard.classList.add("hidden");
+    homeworkCard.classList.add("hidden");
+    examCard.classList.add("hidden");
+    paymentCard.classList.add("hidden");
+    noticeCard.classList.add("hidden");
 
-    if(cardElement) cardElement.classList.remove("hidden");
-    if(contentElement) contentElement.innerHTML = "جارى التحميل...";
+    cardElement.classList.remove("hidden");
 
+    // إذا كانت البيانات محملة مسبقاً، اعرضها في الفترات الزمنية (0 ثانية)
+    if (cacheData[cacheKey] !== null) {
+        processRender(cacheData[cacheKey], contentElement, mappingFn);
+        return;
+    }
+
+    contentElement.innerHTML = "جارى التحميل الفورى...";
     try {
         const response = await fetch(apiUrl + "?code=" + currentStudent.code);
         const data = await response.json();
-
-        if (!data || data.length === 0) {
-            if(contentElement) contentElement.innerHTML = "<h3>لا توجد بيانات متاحة</h3>";
-            return;
-        }
-
-        let html = "";
-        if (window.innerWidth <= 768) {
-            data.forEach(item => { html += mappingFn(item, true); });
-        } else {
-            html = mappingFn(data, false);
-        }
-        if(contentElement) contentElement.innerHTML = html;
+        cacheData[cacheKey] = data; // تخزينها للمرة القادمة
+        processRender(data, contentElement, mappingFn);
     } catch (e) {
-        if(contentElement) contentElement.innerHTML = "<h3>حدث خطأ أثناء تحميل البيانات</h3>";
+        contentElement.innerHTML = "<h3>حدث خطأ أثناء تحميل البيانات</h3>";
     }
 }
 
+function processRender(data, contentElement, mappingFn) {
+    if (!data || data.length === 0) {
+        contentElement.innerHTML = "<h3>لا توجد بيانات متاحة</h3>";
+        return;
+    }
+    let html = "";
+    if (window.innerWidth <= 768) {
+        data.forEach(item => { html += mappingFn(item, true); });
+    } else {
+        html = mappingFn(data, false);
+    }
+    contentElement.innerHTML = html;
+}
+
 function showAttendance() {
-    fetchAndRender(ATTENDANCE_API, attendanceCard, attendanceContent, (item, isMobile) => {
+    renderFast(ATTENDANCE_API, attendanceCard, attendanceContent, (item, isMobile) => {
         if (isMobile) {
             return `<div class="attendance-mobile-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div class="card-item"><span>✅ الحالة</span><strong>${item.status || '-'}</strong></div></div>`;
         }
@@ -236,11 +275,11 @@ function showAttendance() {
             table += `<tr><td>${row.lesson || '-'}</td><td>${row.date || '-'}</td><td>${row.status || '-'}</td></tr>`;
         });
         return table + `</table></div>`;
-    });
+    }, 'attendance');
 }
 
 function showHomework() {
-    fetchAndRender(HOMEWORK_API, homeworkCard, homeworkContent, (item, isMobile) => {
+    renderFast(HOMEWORK_API, homeworkCard, homeworkContent, (item, isMobile) => {
         if (isMobile) {
             return `<div class="attendance-mobile-card homework-card"><div class="card-item"><span>📚 رقم الواجب</span><strong>${item.homework || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div class="card-item"><span>🎯 درجة الطالب</span><strong>${item.grade || '-'}</strong></div><div class="card-item"><span>🏆 الدرجة النهائية</span><strong>${item.total || '-'}</strong></div></div>`;
         }
@@ -249,11 +288,11 @@ function showHomework() {
             table += `<tr><td>${row.homework || '-'}</td><td>${row.date || '-'}</td><td>${row.grade || '-'}</td><td>${row.total || '-'}</td></tr>`;
         });
         return table + `</table></div>`;
-    });
+    }, 'homework');
 }
 
 function showExam() {
-    fetchAndRender(EXAM_API, examCard, examContent, (item, isMobile) => {
+    renderFast(EXAM_API, examCard, examContent, (item, isMobile) => {
         if (isMobile) {
             return `<div class="attendance-mobile-card exam-card"><div class="card-item"><span>📝 رقم الامتحان</span><strong>${item.exam || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div class="card-item"><span>🎯 درجة الطالب</span><strong>${item.grade || '-'}</strong></div><div class="card-item"><span>🏆 الدرجة النهائية</span><strong>${item.total || '-'}</strong></div></div>`;
         }
@@ -262,11 +301,11 @@ function showExam() {
             table += `<tr><td>${row.exam || '-'}</td><td>${row.date || '-'}</td><td>${row.grade || '-'}</td><td>${row.total || '-'}</td></tr>`;
         });
         return table + `</table></div>`;
-    });
+    }, 'exam');
 }
 
 function showPayments() {
-    fetchAndRender(PAYMENT_API, paymentCard, paymentContent, (item, isMobile) => {
+    renderFast(PAYMENT_API, paymentCard, paymentContent, (item, isMobile) => {
         if (isMobile) {
             return `<div class="attendance-mobile-card payment-card"><div class="card-item"><span>📅 الشهر</span><strong>${item.month || '-'}</strong></div><div class="card-item"><span>💵 المدفوع</span><strong>${item.paid || '-'}</strong></div><div class="card-item"><span>❗ المتبقى</span><strong>${item.remaining || '-'}</strong></div><div class="card-item"><span>💰 إجمالى المستحق</span><strong>${item.total || '-'}</strong></div></div>`;
         }
@@ -275,13 +314,13 @@ function showPayments() {
             table += `<tr><td>${row.month || '-'}</td><td>${row.paid || '-'}</td><td>${row.remaining || '-'}</td><td>${row.total || '-'}</td></tr>`;
         });
         return table + `</table></div>`;
-    });
+    }, 'payment');
 }
 
 function showNotices() {
-    fetchAndRender(NOTICE_API, noticeCard, noticeContent, (item, isMobile) => {
+    renderFast(NOTICE_API, noticeCard, noticeContent, (item, isMobile) => {
         const imgUrl = item.image || item.imageUrl || item.photo || "";
-        const imgHtmlMobile = imgUrl ? `<div class="notice-img-container"><a href="${imgUrl}" target="_blank"><img src="${imgUrl}" alt="صورة التنبيه" class="notice-img"></a></div>` : "";
+        const imgHtmlMobile = imgUrl ? `<div class="notice-img-container"><a href="${imgUrl}" target="_blank"><img src="${imgUrl}" alt="صورة التنبيه" class="notice-img" style="max-width:100%; height:auto; border-radius:10px; margin-top:10px;"></a></div>` : "";
         
         if (isMobile) {
             return `<div class="attendance-mobile-card notice-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div style="margin-top:15px;line-height:2"><span style="color:#d32f2f;font-weight:bold">🔔 التنبيه</span><br>${item.notice || ''}</div>${imgHtmlMobile}</div>`;
@@ -290,9 +329,9 @@ function showNotices() {
         let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>الحصة</th><th>التاريخ</th><th>التنبيه أو الملاحظة</th><th>الصورة المرفقة</th></tr>`;
         item.forEach(row => {
             const rowImgUrl = row.image || row.imageUrl || row.photo || "";
-            const imgHtmlDesktop = rowImgUrl ? `<a href="${rowImgUrl}" target="_blank"><img src="${rowImgUrl}" alt="صورة" style="width:80px;border-radius:8px;"></a>` : "لا يوجد";
+            const imgHtmlDesktop = rowImgUrl ? `<a href="${rowImgUrl}" target="_blank"><img src="${rowImgUrl}" alt="صورة" style="width:150px; max-height:120px; border-radius:8px; object-fit:cover; box-shadow:0 3px 10px rgba(0,0,0,0.15);"></a>` : "لا يوجد";
             table += `<tr><td>${row.lesson || '-'}</td><td>${row.date || '-'}</td><td>${row.notice || ''}</td><td>${imgHtmlDesktop}</td></tr>`;
         });
         return table + `</table></div>`;
-    });
+    }, 'notice');
 }
