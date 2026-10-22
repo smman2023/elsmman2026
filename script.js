@@ -9,16 +9,8 @@ const EXAM_API = "https://script.google.com/macros/s/AKfycbyrSNWCMtLaFZepp3OlxuL
 const PAYMENT_API = "https://script.google.com/macros/s/AKfycbwBxrvavrzIp_9tKKIk63OUYLhk30WkT_zU3JWFk7Km11Dmh8gB_ycqgoND_4Z-JwdX/exec";
 const NOTICE_API = "https://script.google.com/macros/s/AKfycbwNYZD5TFj4x3NvqHKPNJgaH_FWxKsDOGRQPFX3VIKO7bdWsuyYPHwUvtigvwNDjazD/exec";
 
-//=========================================
-// Variables
-//=========================================
-
 let students = [];
 let currentStudent = null;
-
-//=========================================
-// Elements
-//=========================================
 
 const codeInput = document.getElementById("codeInput");
 const passwordInput = document.getElementById("passwordInput");
@@ -28,37 +20,29 @@ const notFound = document.getElementById("notFound");
 const rememberMeInput = document.getElementById("rememberMe");
 const logoutBtn = document.getElementById("logoutBtn");
 
-// Buttons
 const attendanceBtn = document.getElementById("attendanceBtn");
 const homeworkBtn = document.getElementById("homeworkBtn");
 const examBtn = document.getElementById("examBtn");
 const paymentBtn = document.getElementById("paymentBtn");
 const noticeBtn = document.getElementById("noticeBtn");
 
-// Cards
 const attendanceCard = document.getElementById("attendanceCard");
 const homeworkCard = document.getElementById("homeworkCard");
 const examCard = document.getElementById("examCard");
 const paymentCard = document.getElementById("paymentCard");
 const noticeCard = document.getElementById("noticeCard");
 
-// Contents
 const attendanceContent = document.getElementById("attendanceContent");
 const homeworkContent = document.getElementById("homeworkContent");
 const examContent = document.getElementById("examContent");
 const paymentContent = document.getElementById("paymentContent");
 const noticeContent = document.getElementById("noticeContent");
 
-// Back Buttons
 const backBtn = document.getElementById("backBtn");
 const backHomeworkBtn = document.getElementById("backHomeworkBtn");
 const backExamBtn = document.getElementById("backExamBtn");
 const backPaymentBtn = document.getElementById("backPaymentBtn");
 const backNoticeBtn = document.getElementById("backNoticeBtn");
-
-//=========================================
-// تحميل بيانات الطلاب
-//=========================================
 
 async function loadStudents(){
     try {
@@ -68,12 +52,11 @@ async function loadStudents(){
         const response = await fetch(API_URL, { method: "GET", redirect: "follow" });
         students = await response.json();
 
-        console.log("Students loaded:", students.length);
+        console.log("Students loaded successfully:", students.length);
 
         searchBtn.disabled = false;
         searchBtn.innerHTML = "استعلام";
 
-        // استرجاع الحفظ التلقائي إن وُجد
         const savedCode = localStorage.getItem("studentCode");
         const savedPhone = localStorage.getItem("studentPhone");
 
@@ -92,19 +75,10 @@ async function loadStudents(){
 
 loadStudents();
 
-//=========================================
-// Events
-//=========================================
-
 searchBtn.addEventListener("click", searchStudent);
 
-codeInput.addEventListener("keypress", function(e){
-    if(e.key === "Enter"){ searchStudent(); }
-});
-
-passwordInput.addEventListener("keypress", function(e){
-    if(e.key === "Enter"){ searchStudent(); }
-});
+codeInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
+passwordInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
 
 attendanceBtn.addEventListener("click", showAttendance);
 homeworkBtn.addEventListener("click", showHomework);
@@ -112,7 +86,6 @@ examBtn.addEventListener("click", showExam);
 paymentBtn.addEventListener("click", showPayments);
 noticeBtn.addEventListener("click", showNotices);
 
-// أزرار الرجوع
 function goBackToResult() {
     attendanceCard.classList.add("hidden");
     homeworkCard.classList.add("hidden");
@@ -128,7 +101,6 @@ backExamBtn.addEventListener("click", goBackToResult);
 backPaymentBtn.addEventListener("click", goBackToResult);
 backNoticeBtn.addEventListener("click", goBackToResult);
 
-// زر تسجيل الخروج
 if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
         localStorage.removeItem("studentCode");
@@ -139,10 +111,6 @@ if (logoutBtn) {
         alert("تم تسجيل الخروج بنجاح");
     });
 }
-
-//=========================================
-// عرض بيانات الطالب
-//=========================================
 
 function displayStudent(student){
     currentStudent = student;
@@ -170,24 +138,20 @@ function displayStudent(student){
     document.getElementById("parentWhatsapp").textContent = student.parentWhatsapp;
 }
 
-//=========================================
-// البحث عن الطالب
-//=========================================
-
 function searchStudent(){
-    function normalizeDigits(str) {
+    function normalize(str) {
         if (!str) return "";
         return String(str)
             .replace(/[\u0660-\u0669]/g, d => d.charCodeAt(0) - 1632)
             .replace(/[\u06F0-\u06F9]/g, d => d.charCodeAt(0) - 1776)
-            .replace(/\D/g, "");
+            .replace(/\D/g, ""); // استخراج الأرقام فقط وتجاهل الرموز والمسافات
     }
 
     const rawCode = codeInput.value.trim();
     const rawPhone = passwordInput.value.trim();
 
-    const code = normalizeDigits(rawCode);
-    const phoneInput = normalizeDigits(rawPhone);
+    const code = normalize(rawCode);
+    const phoneInput = normalize(rawPhone);
 
     if(code === "" || phoneInput === ""){
         alert("برجاء إدخال كود الطالب ورقم الواتساب");
@@ -197,21 +161,26 @@ function searchStudent(){
     result.classList.add("hidden");
     notFound.classList.add("hidden");
 
+    // طباعة للاختبار في الـ Console لمعرفة ماذا يبحث المستخدم
+    console.log("Searching for Code:", code, "Phone:", phoneInput);
+
     const student = students.find(item => {
-        const itemCode = normalizeDigits(item.code);
-        const studentWa = normalizeDigits(item.studentWhatsapp);
-        const parentWa = normalizeDigits(item.parentWhatsapp);
+        const itemCode = normalize(item.code);
+        const studentWa = normalize(item.studentWhatsapp);
+        const parentWa = normalize(item.parentWhatsapp);
 
         return itemCode === code && (studentWa === phoneInput || parentWa === phoneInput);
     });
 
     if(!student){
+        console.warn("Student not found in the loaded list!");
         notFound.innerHTML = `<i class="fa-solid fa-circle-xmark"></i><br><br><strong>كود الطالب أو رقم الواتساب غير صحيح</strong>`;
         notFound.classList.remove("hidden");
         return;
     }
 
-    // حفظ البيانات إذا كان الخيار محدداً
+    console.log("Student found:", student.name);
+
     if (rememberMeInput && rememberMeInput.checked) {
         localStorage.setItem("studentCode", rawCode);
         localStorage.setItem("studentPhone", rawPhone);
@@ -223,11 +192,7 @@ function searchStudent(){
     displayStudent(student);
 }
 
-//=========================================
-// دوال عرض الأقسام (حضور، واجب، امتحانات، مدفوعات، تنبيهات)
-//=========================================
-
-async function fetchAndRender(apiUrl, cardElement, contentElement, titleKey, mappingFn) {
+async function fetchAndRender(apiUrl, cardElement, contentElement, mappingFn) {
     result.classList.add("hidden");
     attendanceCard.classList.add("hidden");
     homeworkCard.classList.add("hidden");
@@ -260,7 +225,7 @@ async function fetchAndRender(apiUrl, cardElement, contentElement, titleKey, map
 }
 
 function showAttendance() {
-    fetchAndRender(ATTENDANCE_API, attendanceCard, attendanceContent, "Attendance", (item, isMobile) => {
+    fetchAndRender(ATTENDANCE_API, attendanceCard, attendanceContent, (item, isMobile) => {
         if (isMobile) {
             return `<div class="attendance-mobile-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div class="card-item"><span>✅ الحالة</span><strong>${item.status || '-'}</strong></div></div>`;
         }
@@ -273,7 +238,7 @@ function showAttendance() {
 }
 
 function showHomework() {
-    fetchAndRender(HOMEWORK_API, homeworkCard, homeworkContent, "Homework", (item, isMobile) => {
+    fetchAndRender(HOMEWORK_API, homeworkCard, homeworkContent, (item, isMobile) => {
         if (isMobile) {
             return `<div class="attendance-mobile-card homework-card"><div class="card-item"><span>📚 رقم الواجب</span><strong>${item.homework || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div class="card-item"><span>🎯 درجة الطالب</span><strong>${item.grade || '-'}</strong></div><div class="card-item"><span>🏆 الدرجة النهائية</span><strong>${item.total || '-'}</strong></div></div>`;
         }
@@ -286,7 +251,7 @@ function showHomework() {
 }
 
 function showExam() {
-    fetchAndRender(EXAM_API, examCard, examContent, "Exam", (item, isMobile) => {
+    fetchAndRender(EXAM_API, examCard, examContent, (item, isMobile) => {
         if (isMobile) {
             return `<div class="attendance-mobile-card exam-card"><div class="card-item"><span>📝 رقم الامتحان</span><strong>${item.exam || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div class="card-item"><span>🎯 درجة الطالب</span><strong>${item.grade || '-'}</strong></div><div class="card-item"><span>🏆 الدرجة النهائية</span><strong>${item.total || '-'}</strong></div></div>`;
         }
@@ -299,7 +264,7 @@ function showExam() {
 }
 
 function showPayments() {
-    fetchAndRender(PAYMENT_API, paymentCard, paymentContent, "Payments", (item, isMobile) => {
+    fetchAndRender(PAYMENT_API, paymentCard, paymentContent, (item, isMobile) => {
         if (isMobile) {
             return `<div class="attendance-mobile-card payment-card"><div class="card-item"><span>📅 الشهر</span><strong>${item.month || '-'}</strong></div><div class="card-item"><span>💵 المدفوع</span><strong>${item.paid || '-'}</strong></div><div class="card-item"><span>❗ المتبقى</span><strong>${item.remaining || '-'}</strong></div><div class="card-item"><span>💰 إجمالى المستحق</span><strong>${item.total || '-'}</strong></div></div>`;
         }
@@ -312,7 +277,7 @@ function showPayments() {
 }
 
 function showNotices() {
-    fetchAndRender(NOTICE_API, noticeCard, noticeContent, "Notices", (item, isMobile) => {
+    fetchAndRender(NOTICE_API, noticeCard, noticeContent, (item, isMobile) => {
         const imgUrl = item.image || item.imageUrl || item.photo || "";
         const imgHtmlMobile = imgUrl ? `<div class="notice-img-container"><a href="${imgUrl}" target="_blank"><img src="${imgUrl}" alt="صورة التنبيه" class="notice-img"></a></div>` : "";
         
