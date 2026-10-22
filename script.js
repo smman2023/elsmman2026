@@ -7,7 +7,7 @@ const ATTENDANCE_API = "https://script.google.com/macros/s/AKfycbzd0as48EDKd4k9y
 const HOMEWORK_API = "https://script.google.com/macros/s/AKfycbyGgMFmNMPR6OAWNBemEoTF_jFs1u2AXaWJXFOeA6iVuOlgeJau1DuAutH89h9oP_hC-g/exec";
 const EXAM_API = "https://script.google.com/macros/s/AKfycbyrSNWCMtLaFZepp3OlxuLip2Pe02X2bndnkbqJE_2DszwwPPKsSnP1wsSlv7pqjvi8fA/exec";
 const PAYMENT_API = "https://script.google.com/macros/s/AKfycbwBxrvavrzIp_9tKKIk63OUYLhk30WkT_zU3JWFk7Km11Dmh8gB_ycqgoND_4Z-JwdX/exec";
-const NOTICE_API = "https://script.google.com/macros/s/AKfycbwNYZD5TFj4x3NvqHKPNJgaH_FWxKsDOGRQPFX3VIKO7bdWsuyYPHwUvtigvwNDjazD/exec";
+const NOTICE_API = "https://script.google.com/macros/s/AKfycbyQ3ckcK_6nwcCs_Gm9yPJ6MMiRHVMoI0KYyli79w3W0cpteMQRJKuznmNWAAlxLv1D/exec";
 
 let students = [];
 let currentStudent = null;
