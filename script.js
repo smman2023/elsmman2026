@@ -115,27 +115,31 @@ if (logoutBtn) {
 function displayStudent(student){
     currentStudent = student;
 
+    // إظهار بطاقة البيانات وإخفاء الخطأ
     result.classList.remove("hidden");
     notFound.classList.add("hidden");
 
+    // إخفاء باقي الكروت
     attendanceCard.classList.add("hidden");
     homeworkCard.classList.add("hidden");
     examCard.classList.add("hidden");
     paymentCard.classList.add("hidden");
     noticeCard.classList.add("hidden");
 
+    // إظهار الأزرار
     attendanceBtn.classList.remove("hidden");
     homeworkBtn.classList.remove("hidden");
     examBtn.classList.remove("hidden");
     paymentBtn.classList.remove("hidden");
     noticeBtn.classList.remove("hidden");
 
-    document.getElementById("studentCode").textContent = student.code;
-    document.getElementById("studentName").textContent = student.name;
-    document.getElementById("studentGrade").textContent = student.grade;
-    document.getElementById("studentGroup").textContent = student.group;
-    document.getElementById("studentWhatsapp").textContent = student.studentWhatsapp;
-    document.getElementById("parentWhatsapp").textContent = student.parentWhatsapp;
+    // تعبئة البيانات والتأكد من عدم ظهور قيم فارغة
+    document.getElementById("studentCode").textContent = student.code || "-";
+    document.getElementById("studentName").textContent = student.name || "-";
+    document.getElementById("studentGrade").textContent = student.grade || "-";
+    document.getElementById("studentGroup").textContent = student.group || "-";
+    document.getElementById("studentWhatsapp").textContent = student.studentWhatsapp || "-";
+    document.getElementById("parentWhatsapp").textContent = student.parentWhatsapp || "-";
 }
 
 function searchStudent(){
@@ -144,7 +148,7 @@ function searchStudent(){
         return String(str)
             .replace(/[\u0660-\u0669]/g, d => d.charCodeAt(0) - 1632)
             .replace(/[\u06F0-\u06F9]/g, d => d.charCodeAt(0) - 1776)
-            .replace(/\D/g, ""); // استخراج الأرقام فقط وتجاهل الرموز والمسافات
+            .replace(/\D/g, "");
     }
 
     const rawCode = codeInput.value.trim();
@@ -161,9 +165,6 @@ function searchStudent(){
     result.classList.add("hidden");
     notFound.classList.add("hidden");
 
-    // طباعة للاختبار في الـ Console لمعرفة ماذا يبحث المستخدم
-    console.log("Searching for Code:", code, "Phone:", phoneInput);
-
     const student = students.find(item => {
         const itemCode = normalize(item.code);
         const studentWa = normalize(item.studentWhatsapp);
@@ -173,13 +174,10 @@ function searchStudent(){
     });
 
     if(!student){
-        console.warn("Student not found in the loaded list!");
         notFound.innerHTML = `<i class="fa-solid fa-circle-xmark"></i><br><br><strong>كود الطالب أو رقم الواتساب غير صحيح</strong>`;
         notFound.classList.remove("hidden");
         return;
     }
-
-    console.log("Student found:", student.name);
 
     if (rememberMeInput && rememberMeInput.checked) {
         localStorage.setItem("studentCode", rawCode);
