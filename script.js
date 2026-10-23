@@ -2,7 +2,7 @@
 // Google Sheets APIs
 //=========================================
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzF5mN3LY937Xp3iE4c6xjwn5PTmpkoipLCM4-Ae-juTXtL4rBiEM0CKf2Fab3Ho-Xa/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz4eWiLKJMZjiEvJ3HlWawVHbyLuAtp4BhDTzLN7gqRT3jlpWFBvle_UoiSzMPDgmYfzw/exec";
 const ATTENDANCE_API = "https://script.google.com/macros/s/AKfycbzd0as48EDKd4k9y2IMggJzTc9QGhMuUysa0X4R1Q6plhtGtFlnfMBbXnyZamZfFPN1/exec";
 const HOMEWORK_API = "https://script.google.com/macros/s/AKfycbyGgMFmNMPR6OAWNBemEoTF_jFs1u2AXaWJXFOeA6iVuOlgeJau1DuAutH89h9oP_hC-g/exec";
 const EXAM_API = "https://script.google.com/macros/s/AKfycbyrSNWCMtLaFZepp3OlxuLip2Pe02X2bndnkbqJE_2DszwwPPKsSnP1wsSlv7pqjvi8fA/exec";
@@ -19,6 +19,7 @@ let cacheData = {
     notice: null
 };
 
+// العناصر الأساسية
 const codeInput = document.getElementById("codeInput");
 const passwordInput = document.getElementById("passwordInput");
 const searchBtn = document.getElementById("searchBtn");
@@ -27,31 +28,35 @@ const notFound = document.getElementById("notFound");
 const rememberMeInput = document.getElementById("rememberMe");
 const logoutBtn = document.getElementById("logoutBtn");
 
+// أزرار الكروت
 const attendanceBtn = document.getElementById("attendanceBtn");
 const homeworkBtn = document.getElementById("homeworkBtn");
 const examBtn = document.getElementById("examBtn");
 const paymentBtn = document.getElementById("paymentBtn");
 const noticeBtn = document.getElementById("noticeBtn");
 
+// الكروت
 const attendanceCard = document.getElementById("attendanceCard");
 const homeworkCard = document.getElementById("homeworkCard");
 const examCard = document.getElementById("examCard");
 const paymentCard = document.getElementById("paymentCard");
 const noticeCard = document.getElementById("noticeCard");
 
+// محتوى الكروت
 const attendanceContent = document.getElementById("attendanceContent");
 const homeworkContent = document.getElementById("homeworkContent");
 const examContent = document.getElementById("examContent");
 const paymentContent = document.getElementById("paymentContent");
 const noticeContent = document.getElementById("noticeContent");
 
+// أزرار العودة
 const backBtn = document.getElementById("backBtn");
 const backHomeworkBtn = document.getElementById("backHomeworkBtn");
 const backExamBtn = document.getElementById("backExamBtn");
 const backPaymentBtn = document.getElementById("backPaymentBtn");
 const backNoticeBtn = document.getElementById("backNoticeBtn");
 
-// التحقق من وجود تسجيل دخول مخزن مسبقاً عند فتح الصفحة (تفتح فوراً)
+// التحقق من وجود تسجيل دخول مخزن مسبقاً
 window.addEventListener("DOMContentLoaded", () => {
     const savedCode = localStorage.getItem("studentCode");
     const savedPhone = localStorage.getItem("studentPhone");
@@ -63,15 +68,16 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-if(searchBtn) searchBtn.addEventListener("click", searchStudent);
-if(codeInput) codeInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
-if(passwordInput) passwordInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
+// الأحداث (Event Listeners)
+if (searchBtn) searchBtn.addEventListener("click", searchStudent);
+if (codeInput) codeInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
+if (passwordInput) passwordInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
 
-if(attendanceBtn) attendanceBtn.addEventListener("click", showAttendance);
-if(homeworkBtn) homeworkBtn.addEventListener("click", showHomework);
-if(examBtn) examBtn.addEventListener("click", showExam);
-if(paymentBtn) paymentBtn.addEventListener("click", showPayments);
-if(noticeBtn) noticeBtn.addEventListener("click", showNotices);
+if (attendanceBtn) attendanceBtn.addEventListener("click", showAttendance);
+if (homeworkBtn) homeworkBtn.addEventListener("click", showHomework);
+if (examBtn) examBtn.addEventListener("click", showExam);
+if (paymentBtn) paymentBtn.addEventListener("click", showPayments);
+if (noticeBtn) noticeBtn.addEventListener("click", showNotices);
 
 function goBackToResult() {
     if(attendanceCard) attendanceCard.classList.add("hidden");
@@ -129,7 +135,8 @@ function displayStudent(student){
     preloadAllData(student.code);
 }
 
-async function searchStudent(){
+// دالة الاستعلام عن الطالب
+async function searchStudent() {
     function normalize(str) {
         if (!str) return "";
         return String(str)
@@ -144,30 +151,35 @@ async function searchStudent(){
     const code = normalize(rawCode);
     const phoneInput = normalize(rawPhone);
 
-    if(code === "" || phoneInput === ""){
+    if (code === "" || phoneInput === "") {
         alert("برجاء إدخال كود الطالب ورقم الواتساب");
         return;
     }
 
-    if(result) result.classList.add("hidden");
-    if(notFound) notFound.classList.add("hidden");
+    if (result) result.classList.add("hidden");
+    if (notFound) notFound.classList.add("hidden");
 
-    if(searchBtn) {
+    if (searchBtn) {
         searchBtn.disabled = true;
         searchBtn.innerHTML = "جاري التحقق...";
     }
 
     try {
-        const response = await fetch(`${API_URL}?code=${code}&phone=${phoneInput}`, { method: "GET", redirect: "follow" });
+        const response = await fetch(`${API_URL}?code=${encodeURIComponent(code)}&phone=${encodeURIComponent(phoneInput)}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const student = await response.json();
 
-        if(searchBtn) {
+        if (searchBtn) {
             searchBtn.disabled = false;
             searchBtn.innerHTML = "استعلام";
         }
 
-        if(!student || student.error || !student.code){
-            if(notFound) {
+        if (!student || student.error || !student.code) {
+            if (notFound) {
                 notFound.innerHTML = `<i class="fa-solid fa-circle-xmark"></i><br><br><strong>كود الطالب أو رقم الواتساب غير صحيح</strong>`;
                 notFound.classList.remove("hidden");
             }
@@ -184,9 +196,9 @@ async function searchStudent(){
 
         displayStudent(student);
 
-    } catch(error) {
+    } catch (error) {
         console.error("Error searching student:", error);
-        if(searchBtn) {
+        if (searchBtn) {
             searchBtn.disabled = false;
             searchBtn.innerHTML = "استعلام";
         }
@@ -194,15 +206,18 @@ async function searchStudent(){
     }
 }
 
+// تحميل البيانات في الخلفية
 async function preloadAllData(code) {
     cacheData = { attendance: null, homework: null, exam: null, payment: null, notice: null };
     
+    const fetchSafe = (url) => fetch(`${url}?code=${encodeURIComponent(code)}`).then(res => res.json()).catch(() => []);
+
     Promise.all([
-        fetch(ATTENDANCE_API + "?code=" + code).then(res => res.json()).catch(() => []),
-        fetch(HOMEWORK_API + "?code=" + code).then(res => res.json()).catch(() => []),
-        fetch(EXAM_API + "?code=" + code).then(res => res.json()).catch(() => []),
-        fetch(PAYMENT_API + "?code=" + code).then(res => res.json()).catch(() => []),
-        fetch(NOTICE_API + "?code=" + code).then(res => res.json()).catch(() => [])
+        fetchSafe(ATTENDANCE_API),
+        fetchSafe(HOMEWORK_API),
+        fetchSafe(EXAM_API),
+        fetchSafe(PAYMENT_API),
+        fetchSafe(NOTICE_API)
     ]).then(results => {
         cacheData.attendance = results[0];
         cacheData.homework = results[1];
@@ -226,11 +241,11 @@ function getLoadingHTML() {
 
 async function renderFast(apiUrl, cardElement, contentElement, mappingFn, cacheKey) {
     if(result) result.classList.add("hidden");
-    attendanceCard.classList.add("hidden");
-    homeworkCard.classList.add("hidden");
-    examCard.classList.add("hidden");
-    paymentCard.classList.add("hidden");
-    noticeCard.classList.add("hidden");
+    if(attendanceCard) attendanceCard.classList.add("hidden");
+    if(homeworkCard) homeworkCard.classList.add("hidden");
+    if(examCard) examCard.classList.add("hidden");
+    if(paymentCard) paymentCard.classList.add("hidden");
+    if(noticeCard) noticeCard.classList.add("hidden");
 
     cardElement.classList.remove("hidden");
 
@@ -254,7 +269,7 @@ async function renderFast(apiUrl, cardElement, contentElement, mappingFn, cacheK
     }, 150);
 
     try {
-        const response = await fetch(apiUrl + "?code=" + currentStudent.code);
+        const response = await fetch(`${apiUrl}?code=${encodeURIComponent(currentStudent.code)}`);
         const data = await response.json();
         cacheData[cacheKey] = data;
         
@@ -268,13 +283,13 @@ async function renderFast(apiUrl, cardElement, contentElement, mappingFn, cacheK
 
     } catch (e) {
         clearInterval(interval);
-        contentElement.innerHTML = "<h3>حدث خطأ أثناء تحميل البيانات</h3>";
+        contentElement.innerHTML = "<h3 style='text-align:center;'>حدث خطأ أثناء تحميل البيانات</h3>";
     }
 }
 
 function processRender(data, contentElement, mappingFn) {
     if (!data || data.length === 0) {
-        contentElement.innerHTML = "<h3>لا توجد بيانات متاحة</h3>";
+        contentElement.innerHTML = "<h3 style='text-align:center;'>لا توجد بيانات متاحة</h3>";
         return;
     }
     let html = "";
@@ -286,6 +301,7 @@ function processRender(data, contentElement, mappingFn) {
     contentElement.innerHTML = html;
 }
 
+// عرض الحضور
 function showAttendance() {
     renderFast(ATTENDANCE_API, attendanceCard, attendanceContent, (item, isMobile) => {
         if (isMobile) {
@@ -299,6 +315,7 @@ function showAttendance() {
     }, 'attendance');
 }
 
+// عرض الواجبات
 function showHomework() {
     renderFast(HOMEWORK_API, homeworkCard, homeworkContent, (item, isMobile) => {
         if (isMobile) {
@@ -312,6 +329,7 @@ function showHomework() {
     }, 'homework');
 }
 
+// عرض الامتحانات
 function showExam() {
     renderFast(EXAM_API, examCard, examContent, (item, isMobile) => {
         if (isMobile) {
@@ -325,6 +343,7 @@ function showExam() {
     }, 'exam');
 }
 
+// عرض المدفوعات
 function showPayments() {
     renderFast(PAYMENT_API, paymentCard, paymentContent, (item, isMobile) => {
         if (isMobile) {
@@ -338,12 +357,12 @@ function showPayments() {
     }, 'payment');
 }
 
+// عرض الملاحظات والتنبيهات
 function showNotices() {
     renderFast(NOTICE_API, noticeCard, noticeContent, (item, isMobile) => {
-        const imgUrl = item.image || item.imageUrl || item.photo || "";
-        const imgHtmlMobile = imgUrl ? `<div class="notice-img-container"><a href="${imgUrl}" target="_blank"><img src="${imgUrl}" alt="صورة التنبيه" class="notice-img" style="max-width:100%; height:auto; border-radius:10px; margin-top:10px;"></a></div>` : "";
-        
         if (isMobile) {
+            const imgUrl = item.image || item.imageUrl || item.photo || "";
+            const imgHtmlMobile = imgUrl ? `<div class="notice-img-container"><a href="${imgUrl}" target="_blank"><img src="${imgUrl}" alt="صورة التنبيه" class="notice-img" style="max-width:100%; height:auto; border-radius:10px; margin-top:10px;"></a></div>` : "";
             return `<div class="attendance-mobile-card notice-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div style="margin-top:15px;line-height:2"><span style="color:#d32f2f;font-weight:bold">🔔 التنبيه</span><br>${item.notice || ''}</div>${imgHtmlMobile}</div>`;
         }
 
