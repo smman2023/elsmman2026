@@ -206,25 +206,27 @@ async function searchStudent() {
     }
 }
 
-// تحميل البيانات في الخلفية
+// تحميل البيانات في الخلفية مع إعطاء الأولوية القصوى للحضور
 async function preloadAllData(code) {
     cacheData = { attendance: null, homework: null, exam: null, payment: null, notice: null };
     
-    const fetchSafe = (url) => fetch(`${url}?code=${encodeURIComponent(code)}`).then(res => res.json()).catch(() => []);
+    // 1. تحميل سجل الحضور فوراً وبشكل عاجل ليكون جاهزاً دون أي تأخير
+    try {
+        const attResponse = await fetch(`${ATTENDANCE_API}?code=${encodeURIComponent(code)}`);
+        cacheData.attendance = await attResponse.json();
+    } catch (e) {
+        cacheData.attendance = [];
+    }
 
-    Promise.all([
-        fetchSafe(ATTENDANCE_API),
-        fetchSafe(HOMEWORK_API),
-        fetchSafe(EXAM_API),
-        fetchSafe(PAYMENT_API),
-        fetchSafe(NOTICE_API)
-    ]).then(results => {
-        cacheData.attendance = results[0];
-        cacheData.homework = results[1];
-        cacheData.exam = results[2];
-        cacheData.payment = results[3];
-        cacheData.notice = results[4];
-    });
+    // 2. تحميل باقي الأقسام في الخلفية بعد تأخير بسيط لمنع التكدس على السيرفر
+    setTimeout(async () => {
+        const fetchSafe = (url) => fetch(`${url}?code=${encodeURIComponent(code)}`).then(res => res.json()).catch(() => []);
+
+        cacheData.homework = await fetchSafe(HOMEWORK_API);
+        cacheData.exam = await fetchSafe(EXAM_API);
+        cacheData.payment = await fetchSafe(PAYMENT_API);
+        cacheData.notice = await fetchSafe(NOTICE_API);
+    }, 600);
 }
 
 function getLoadingHTML() {
@@ -301,28 +303,20 @@ function processRender(data, contentElement, mappingFn) {
     contentElement.innerHTML = html;
 }
 
-// تحميل البيانات في الخلفية بذكاء ودون ضغط على السيرفر
-async function preloadAllData(code) {
-    cacheData = { attendance: null, homework: null, exam: null, payment: null, notice: null };
-    
-    // 1. إعطاء الأولوية القصوى وتحميل الحضور فوراً لتكون جاهزة لحظة ضغط الطالب
-    try {
-        const attResponse = await fetch(`${ATTENDANCE_API}?code=${encodeURIComponent(code)}`);
-        cacheData.attendance = await attResponse.json();
-    } catch (e) {
-        cacheData.attendance = [];
-    }
-
-    // 2. تحميل باقي الأقسام في الخلفية بعد جزء من الثانية لتجنب الضغط على سيرفرات جوجل
-    setTimeout(async () => {
-        const fetchSafe = (url) => fetch(`${url}?code=${encodeURIComponent(code)}`).then(res => res.json()).catch(() => []);
-
-        cacheData.homework = await fetchSafe(HOMEWORK_API);
-        cacheData.exam = await fetchSafe(EXAM_API);
-        cacheData.payment = await fetchSafe(PAYMENT_API);
-        cacheData.notice = await fetchSafe(NOTICE_API);
-    }, 600); // تأخير بسيط جداً في الخلفية يمنع التكدس تماماً
+// عرض الحضور
+function showAttendance() {
+    renderFast(ATTENDANCE_API, attendanceCard, attendanceContent, (item, isMobile) => {
+        if (isMobile) {
+            return `<div class="attendance-mobile-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div class="card-item"><span>✅ الحالة</span><strong>${item.status || '-'}</strong></div></div>`;
+        }
+        let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>الحصة</th><th>التاريخ</th><th>الحالة</th></tr>`;
+        item.forEach(row => {
+            table += `<tr><td>${row.lesson || '-'}</td><td>${row.date || '-'}</td><td>${row.status || '-'}</td></tr>`;
+        });
+        return table + `</table></div>`;
+    }, 'attendance');
 }
+
 // عرض الواجبات
 function showHomework() {
     renderFast(HOMEWORK_API, homeworkCard, homeworkContent, (item, isMobile) => {
