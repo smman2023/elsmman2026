@@ -301,20 +301,28 @@ function processRender(data, contentElement, mappingFn) {
     contentElement.innerHTML = html;
 }
 
-// عرض الحضور
-function showAttendance() {
-    renderFast(ATTENDANCE_API, attendanceCard, attendanceContent, (item, isMobile) => {
-        if (isMobile) {
-            return `<div class="attendance-mobile-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div class="card-item"><span>✅ الحالة</span><strong>${item.status || '-'}</strong></div></div>`;
-        }
-        let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>الحصة</th><th>التاريخ</th><th>الحالة</th></tr>`;
-        item.forEach(row => {
-            table += `<tr><td>${row.lesson || '-'}</td><td>${row.date || '-'}</td><td>${row.status || '-'}</td></tr>`;
-        });
-        return table + `</table></div>`;
-    }, 'attendance');
-}
+// تحميل البيانات في الخلفية بذكاء ودون ضغط على السيرفر
+async function preloadAllData(code) {
+    cacheData = { attendance: null, homework: null, exam: null, payment: null, notice: null };
+    
+    // 1. إعطاء الأولوية القصوى وتحميل الحضور فوراً لتكون جاهزة لحظة ضغط الطالب
+    try {
+        const attResponse = await fetch(`${ATTENDANCE_API}?code=${encodeURIComponent(code)}`);
+        cacheData.attendance = await attResponse.json();
+    } catch (e) {
+        cacheData.attendance = [];
+    }
 
+    // 2. تحميل باقي الأقسام في الخلفية بعد جزء من الثانية لتجنب الضغط على سيرفرات جوجل
+    setTimeout(async () => {
+        const fetchSafe = (url) => fetch(`${url}?code=${encodeURIComponent(code)}`).then(res => res.json()).catch(() => []);
+
+        cacheData.homework = await fetchSafe(HOMEWORK_API);
+        cacheData.exam = await fetchSafe(EXAM_API);
+        cacheData.payment = await fetchSafe(PAYMENT_API);
+        cacheData.notice = await fetchSafe(NOTICE_API);
+    }, 600); // تأخير بسيط جداً في الخلفية يمنع التكدس تماماً
+}
 // عرض الواجبات
 function showHomework() {
     renderFast(HOMEWORK_API, homeworkCard, homeworkContent, (item, isMobile) => {
