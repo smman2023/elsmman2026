@@ -54,7 +54,7 @@ const backBtn = document.getElementById("backBtn");
 const backHomeworkBtn = document.getElementById("backHomeworkBtn");
 const backExamBtn = document.getElementById("backExamBtn");
 const backPaymentBtn = document.getElementById("backPaymentBtn");
-const backNoticeBtn = document.getElementById("backNoticeBtn");
+const backNoticeBtn = document.getElementById("backNoticeBtn") || document.getElementById("backNoticeCard");
 
 // التحقق من وجود تسجيل دخول مخزن مسبقاً
 window.addEventListener("DOMContentLoaded", () => {
