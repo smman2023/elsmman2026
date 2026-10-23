@@ -9,7 +9,6 @@ const EXAM_API = "https://script.google.com/macros/s/AKfycbyrSNWCMtLaFZepp3OlxuL
 const PAYMENT_API = "https://script.google.com/macros/s/AKfycbwBxrvavrzIp_9tKKIk63OUYLhk30WkT_zU3JWFk7Km11Dmh8gB_ycqgoND_4Z-JwdX/exec";
 const NOTICE_API = "https://script.google.com/macros/s/AKfycbwl6OSRp_KCjrIuEjGDtg3FsXarWwZ6xvVFto_tzzUFl6lX7sWVXdK0OLhg7oKenWw-/exec";
 
-let students = [];
 let currentStudent = null;
 
 let cacheData = {
@@ -52,40 +51,17 @@ const backExamBtn = document.getElementById("backExamBtn");
 const backPaymentBtn = document.getElementById("backPaymentBtn");
 const backNoticeBtn = document.getElementById("backNoticeBtn");
 
-async function loadStudents(){
-    try {
-        if(searchBtn) {
-            searchBtn.disabled = true;
-            searchBtn.innerHTML = "جاري تحميل البيانات...";
-        }
+// التحقق من وجود تسجيل دخول مخزن مسبقاً عند فتح الصفحة (تفتح فوراً)
+window.addEventListener("DOMContentLoaded", () => {
+    const savedCode = localStorage.getItem("studentCode");
+    const savedPhone = localStorage.getItem("studentPhone");
 
-        const response = await fetch(API_URL, { method: "GET", redirect: "follow" });
-        students = await response.json();
-
-        if(searchBtn) {
-            searchBtn.disabled = false;
-            searchBtn.innerHTML = "استعلام";
-        }
-
-        const savedCode = localStorage.getItem("studentCode");
-        const savedPhone = localStorage.getItem("studentPhone");
-
-        if (savedCode && savedPhone && codeInput && passwordInput) {
-            codeInput.value = savedCode;
-            passwordInput.value = savedPhone;
-            searchStudent();
-        }
+    if (savedCode && savedPhone && codeInput && passwordInput) {
+        codeInput.value = savedCode;
+        passwordInput.value = savedPhone;
+        searchStudent();
     }
-    catch(error){
-        console.error("Error loading students:", error);
-        if(searchBtn) {
-            searchBtn.disabled = false;
-            searchBtn.innerHTML = "استعلام";
-        }
-    }
-}
-
-loadStudents();
+});
 
 if(searchBtn) searchBtn.addEventListener("click", searchStudent);
 if(codeInput) codeInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
@@ -120,6 +96,7 @@ if (logoutBtn) {
         if(codeInput) codeInput.value = "";
         if(passwordInput) passwordInput.value = "";
         if(result) result.classList.add("hidden");
+        currentStudent = null;
         alert("تم تسجيل الخروج بنجاح");
     });
 }
@@ -152,7 +129,7 @@ function displayStudent(student){
     preloadAllData(student.code);
 }
 
-function searchStudent(){
+async function searchStudent(){
     function normalize(str) {
         if (!str) return "";
         return String(str)
@@ -175,31 +152,46 @@ function searchStudent(){
     if(result) result.classList.add("hidden");
     if(notFound) notFound.classList.add("hidden");
 
-    const student = students.find(item => {
-        const itemCode = normalize(item.code);
-        const studentWa = normalize(item.studentWhatsapp);
-        const parentWa = normalize(item.parentWhatsapp);
+    if(searchBtn) {
+        searchBtn.disabled = true;
+        searchBtn.innerHTML = "جاري التحقق...";
+    }
 
-        return itemCode === code && (studentWa === phoneInput || parentWa === phoneInput);
-    });
+    try {
+        const response = await fetch(`${API_URL}?code=${code}&phone=${phoneInput}`, { method: "GET", redirect: "follow" });
+        const student = await response.json();
 
-    if(!student){
-        if(notFound) {
-            notFound.innerHTML = `<i class="fa-solid fa-circle-xmark"></i><br><br><strong>كود الطالب أو رقم الواتساب غير صحيح</strong>`;
-            notFound.classList.remove("hidden");
+        if(searchBtn) {
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = "استعلام";
         }
-        return;
-    }
 
-    if (rememberMeInput && rememberMeInput.checked) {
-        localStorage.setItem("studentCode", rawCode);
-        localStorage.setItem("studentPhone", rawPhone);
-    } else {
-        localStorage.removeItem("studentCode");
-        localStorage.removeItem("studentPhone");
-    }
+        if(!student || student.error || !student.code){
+            if(notFound) {
+                notFound.innerHTML = `<i class="fa-solid fa-circle-xmark"></i><br><br><strong>كود الطالب أو رقم الواتساب غير صحيح</strong>`;
+                notFound.classList.remove("hidden");
+            }
+            return;
+        }
 
-    displayStudent(student);
+        if (rememberMeInput && rememberMeInput.checked) {
+            localStorage.setItem("studentCode", rawCode);
+            localStorage.setItem("studentPhone", rawPhone);
+        } else {
+            localStorage.removeItem("studentCode");
+            localStorage.removeItem("studentPhone");
+        }
+
+        displayStudent(student);
+
+    } catch(error) {
+        console.error("Error searching student:", error);
+        if(searchBtn) {
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = "استعلام";
+        }
+        alert("حدث خطأ في الاتصال، برجاء المحاولة مرة أخرى.");
+    }
 }
 
 async function preloadAllData(code) {
@@ -220,7 +212,6 @@ async function preloadAllData(code) {
     });
 }
 
-// تصميم شريط التحميل ونسبة التقدم
 function getLoadingHTML() {
     return `
         <div style="text-align:center; padding: 30px 20px;">
@@ -250,7 +241,6 @@ async function renderFast(apiUrl, cardElement, contentElement, mappingFn, cacheK
 
     contentElement.innerHTML = getLoadingHTML();
     
-    // محاكاة تصاعد شريط التحميل بنسبة مئوية بشكل سلس
     let progress = 10;
     const bar = document.getElementById("progressBar");
     const text = document.getElementById("progressText");
