@@ -125,12 +125,12 @@ function displayStudent(student){
     if(paymentBtn) paymentBtn.classList.remove("hidden");
     if(noticeBtn) noticeBtn.classList.remove("hidden");
 
-    if(document.getElementById("studentCode")) document.getElementById("studentCode").textContent = student.code || "-";
-    if(document.getElementById("studentName")) document.getElementById("studentName").textContent = student.name || "-";
-    if(document.getElementById("studentGrade")) document.getElementById("studentGrade").textContent = student.grade || "-";
-    if(document.getElementById("studentGroup")) document.getElementById("studentGroup").textContent = student.group || "-";
-    if(document.getElementById("studentWhatsapp")) document.getElementById("studentWhatsapp").textContent = student.studentWhatsapp || "-";
-    if(document.getElementById("parentWhatsapp")) document.getElementById("parentWhatsapp").textContent = student.parentWhatsapp || "-";
+    if(document.getElementById("studentCode")) document.getElementById("studentCode").textContent = student.code || "0";
+    if(document.getElementById("studentName")) document.getElementById("studentName").textContent = student.name || "0";
+    if(document.getElementById("studentGrade")) document.getElementById("studentGrade").textContent = student.grade || "0";
+    if(document.getElementById("studentGroup")) document.getElementById("studentGroup").textContent = student.group || "0";
+    if(document.getElementById("studentWhatsapp")) document.getElementById("studentWhatsapp").textContent = student.studentWhatsapp || "0";
+    if(document.getElementById("parentWhatsapp")) document.getElementById("parentWhatsapp").textContent = student.parentWhatsapp || "0";
 
     preloadAllData(student.code);
 }
@@ -206,11 +206,11 @@ async function searchStudent() {
     }
 }
 
-// تحميل البيانات في الخلفية مع إعطاء الأولوية القصوى للحضور
+// تحميل البيانات بذكاء (إعطاء الأولوية القصوى للحضور لتحميله فوراً دون أي تأخير)
 async function preloadAllData(code) {
     cacheData = { attendance: null, homework: null, exam: null, payment: null, notice: null };
     
-    // 1. تحميل سجل الحضور فوراً وبشكل عاجل ليكون جاهزاً دون أي تأخير
+    // 1. جلب بيانات الحضور فوراً ووضعها في الذاكرة المؤقتة
     try {
         const attResponse = await fetch(`${ATTENDANCE_API}?code=${encodeURIComponent(code)}`);
         cacheData.attendance = await attResponse.json();
@@ -218,7 +218,7 @@ async function preloadAllData(code) {
         cacheData.attendance = [];
     }
 
-    // 2. تحميل باقي الأقسام في الخلفية بعد تأخير بسيط لمنع التكدس على السيرفر
+    // 2. تأجيل باقي الأقسام في الخلفية لمنع التكدس على السيرفر
     setTimeout(async () => {
         const fetchSafe = (url) => fetch(`${url}?code=${encodeURIComponent(code)}`).then(res => res.json()).catch(() => []);
 
@@ -307,11 +307,11 @@ function processRender(data, contentElement, mappingFn) {
 function showAttendance() {
     renderFast(ATTENDANCE_API, attendanceCard, attendanceContent, (item, isMobile) => {
         if (isMobile) {
-            return `<div class="attendance-mobile-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div class="card-item"><span>✅ الحالة</span><strong>${item.status || '-'}</strong></div></div>`;
+            return `<div class="attendance-mobile-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '0'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '0'}</strong></div><div class="card-item"><span>✅ الحالة</span><strong>${item.status || '0'}</strong></div></div>`;
         }
         let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>الحصة</th><th>التاريخ</th><th>الحالة</th></tr>`;
         item.forEach(row => {
-            table += `<tr><td>${row.lesson || '-'}</td><td>${row.date || '-'}</td><td>${row.status || '-'}</td></tr>`;
+            table += `<tr><td>${row.lesson || '0'}</td><td>${row.date || '0'}</td><td>${row.status || '0'}</td></tr>`;
         });
         return table + `</table></div>`;
     }, 'attendance');
@@ -321,11 +321,11 @@ function showAttendance() {
 function showHomework() {
     renderFast(HOMEWORK_API, homeworkCard, homeworkContent, (item, isMobile) => {
         if (isMobile) {
-            return `<div class="attendance-mobile-card homework-card"><div class="card-item"><span>📚 رقم الواجب</span><strong>${item.homework || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div class="card-item"><span>🎯 درجة الطالب</span><strong>${item.grade || '-'}</strong></div><div class="card-item"><span>🏆 الدرجة النهائية</span><strong>${item.total || '-'}</strong></div></div>`;
+            return `<div class="attendance-mobile-card homework-card"><div class="card-item"><span>📚 رقم الواجب</span><strong>${item.homework || '0'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '0'}</strong></div><div class="card-item"><span>🎯 درجة الطالب</span><strong>${item.grade || '0'}</strong></div><div class="card-item"><span>🏆 الدرجة النهائية</span><strong>${item.total || '0'}</strong></div></div>`;
         }
         let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>رقم الواجب</th><th>التاريخ</th><th>درجة الطالب</th><th>الدرجة النهائية</th></tr>`;
         item.forEach(row => {
-            table += `<tr><td>${row.homework || '-'}</td><td>${row.date || '-'}</td><td>${row.grade || '-'}</td><td>${row.total || '-'}</td></tr>`;
+            table += `<tr><td>${row.homework || '0'}</td><td>${row.date || '0'}</td><td>${row.grade || '0'}</td><td>${row.total || '0'}</td></tr>`;
         });
         return table + `</table></div>`;
     }, 'homework');
@@ -335,11 +335,11 @@ function showHomework() {
 function showExam() {
     renderFast(EXAM_API, examCard, examContent, (item, isMobile) => {
         if (isMobile) {
-            return `<div class="attendance-mobile-card exam-card"><div class="card-item"><span>📝 رقم الامتحان</span><strong>${item.exam || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div class="card-item"><span>🎯 درجة الطالب</span><strong>${item.grade || '-'}</strong></div><div class="card-item"><span>🏆 الدرجة النهائية</span><strong>${item.total || '-'}</strong></div></div>`;
+            return `<div class="attendance-mobile-card exam-card"><div class="card-item"><span>📝 رقم الامتحان</span><strong>${item.exam || '0'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '0'}</strong></div><div class="card-item"><span>🎯 درجة الطالب</span><strong>${item.grade || '0'}</strong></div><div class="card-item"><span>🏆 الدرجة النهائية</span><strong>${item.total || '0'}</strong></div></div>`;
         }
         let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>الامتحان</th><th>التاريخ</th><th>درجة الطالب</th><th>الدرجة النهائية</th></tr>`;
         item.forEach(row => {
-            table += `<tr><td>${row.exam || '-'}</td><td>${row.date || '-'}</td><td>${row.grade || '-'}</td><td>${row.total || '-'}</td></tr>`;
+            table += `<tr><td>${row.exam || '0'}</td><td>${row.date || '0'}</td><td>${row.grade || '0'}</td><td>${row.total || '0'}</td></tr>`;
         });
         return table + `</table></div>`;
     }, 'exam');
@@ -349,11 +349,11 @@ function showExam() {
 function showPayments() {
     renderFast(PAYMENT_API, paymentCard, paymentContent, (item, isMobile) => {
         if (isMobile) {
-            return `<div class="attendance-mobile-card payment-card"><div class="card-item"><span>📅 الشهر</span><strong>${item.month || '-'}</strong></div><div class="card-item"><span>💵 المدفوع</span><strong>${item.paid || '-'}</strong></div><div class="card-item"><span>❗ المتبقى</span><strong>${item.remaining || '-'}</strong></div><div class="card-item"><span>💰 إجمالى المستحق</span><strong>${item.total || '-'}</strong></div></div>`;
+            return `<div class="attendance-mobile-card payment-card"><div class="card-item"><span>📅 الشهر</span><strong>${item.month || '0'}</strong></div><div class="card-item"><span>💵 المدفوع</span><strong>${item.paid || '0'}</strong></div><div class="card-item"><span>❗ المتبقى</span><strong>${item.remaining || '0'}</strong></div><div class="card-item"><span>💰 إجمالى المستحق</span><strong>${item.total || '0'}</strong></div></div>`;
         }
         let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>الشهر</th><th>المدفوع</th><th>المتبقى</th><th>إجمالى المستحق</th></tr>`;
         item.forEach(row => {
-            table += `<tr><td>${row.month || '-'}</td><td>${row.paid || '-'}</td><td>${row.remaining || '-'}</td><td>${row.total || '-'}</td></tr>`;
+            table += `<tr><td>${row.month || '0'}</td><td>${row.paid || '0'}</td><td>${row.remaining || '0'}</td><td>${row.total || '0'}</td></tr>`;
         });
         return table + `</table></div>`;
     }, 'payment');
@@ -365,14 +365,14 @@ function showNotices() {
         if (isMobile) {
             const imgUrl = item.image || item.imageUrl || item.photo || "";
             const imgHtmlMobile = imgUrl ? `<div class="notice-img-container"><a href="${imgUrl}" target="_blank"><img src="${imgUrl}" alt="صورة التنبيه" class="notice-img" style="max-width:100%; height:auto; border-radius:10px; margin-top:10px;"></a></div>` : "";
-            return `<div class="attendance-mobile-card notice-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '-'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '-'}</strong></div><div style="margin-top:15px;line-height:2"><span style="color:#d32f2f;font-weight:bold">🔔 التنبيه</span><br>${item.notice || ''}</div>${imgHtmlMobile}</div>`;
+            return `<div class="attendance-mobile-card notice-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '0'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '0'}</strong></div><div style="margin-top:15px;line-height:2"><span style="color:#d32f2f;font-weight:bold">🔔 التنبيه</span><br>${item.notice || '0'}</div>${imgHtmlMobile}</div>`;
         }
 
         let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>الحصة</th><th>التاريخ</th><th>التنبيه أو الملاحظة</th><th>الصورة المرفقة</th></tr>`;
         item.forEach(row => {
             const rowImgUrl = row.image || row.imageUrl || row.photo || "";
-            const imgHtmlDesktop = rowImgUrl ? `<a href="${rowImgUrl}" target="_blank"><img src="${rowImgUrl}" alt="صورة" style="width:150px; max-height:120px; border-radius:8px; object-fit:cover; box-shadow:0 3px 10px rgba(0,0,0,0.15);"></a>` : "لا يوجد";
-            table += `<tr><td>${row.lesson || '-'}</td><td>${row.date || '-'}</td><td>${row.notice || ''}</td><td>${imgHtmlDesktop}</td></tr>`;
+            const imgHtmlDesktop = rowImgUrl ? `<a href="${rowImgUrl}" target="_blank"><img src="${rowImgUrl}" alt="صورة" style="width:150px; max-height:120px; border-radius:8px; object-fit:cover; box-shadow:0 3px 10px rgba(0,0,0,0.15);"></a>` : "0";
+            table += `<tr><td>${row.lesson || '0'}</td><td>${row.date || '0'}</td><td>${row.notice || '0'}</td><td>${imgHtmlDesktop}</td></tr>`;
         });
         return table + `</table></div>`;
     }, 'notice');
